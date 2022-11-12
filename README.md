@@ -1,24 +1,21 @@
-# Frobnicator (this is a template)
+# Sokoban Impostor
 
 ## Authors
-- Andrzej Głuszak (@agluszak on GitHub)
+- Jacek Kurys (@jkurys on GitHub)
 - Linus Torvalds (@torvalds on GitHub)
 
 ## Description
-Frobnicator is going to be a platformer game similar to Super Mario Bros made using Bevy game engine.
+Sokoban Impostor is going to be a puzzle game similar to Sokoban with a twist of recursive boxes made using Bevy game engine.
 
 ## Features
-- map generator
-- shooting
-- enemy AI
-- game state saving and loading
-- scores
+- level selection
+- some boxes contain sublevels inside them
+- basic settings menu
 
 ## Plan
-In the first part we're going to implement the basics: movement, physics and shooting. The enemies will simply bounce from one edge of the platform to the other. There will be only a single map.
+In the first part we're going to implement basic Sokoban with boxes, ending tiles and a basic menu.
 
-In the second part we're going to add random map generator, saving/loading, scores and a more sophisticated AI.
+In the second part we're going to add recursive boxes.
 
 ## Libraries
 - Bevy
-- Serde (for serialization)
