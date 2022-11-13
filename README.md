@@ -2,7 +2,7 @@
 
 ## Authors
 - Jacek Kurys (@jkurys on GitHub)
-- Linus Torvalds (@torvalds on GitHub)
+- Szymon Jakubicz (@Kinzoku99 on GitHub)
 
 ## Description
 Sokoban Impostor is going to be a puzzle game similar to Sokoban with a twist of recursive boxes made using Bevy game engine.
