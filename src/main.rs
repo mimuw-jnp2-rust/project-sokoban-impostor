@@ -4,25 +4,21 @@ use bevy::{
     utils::{Duration, HashMap},
 };
 
-const BOX_HEIGHT: f32 = 1000.;
-const BOX_WIDTH: f32 = 2000.;
-const TILE_SIZE: f32 = 50.;
-const MOVE_DELAY: f32 = 0.15;
+mod consts;
+mod game_objects;
+mod resources;
+use crate::consts::*;
+use crate::resources::*;
+use crate::game_objects::*;
+use crate::game_objects::Direction;
 
 fn main() {
     let mut entities = HashMap::new();
-    entities.insert(Position { x: 3, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: 2, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: 1, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: 0, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: -1, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: -2, y: 3 }, GameObjects::Wall);
-    entities.insert(Position { x: 3, y: -3 }, GameObjects::Wall);
-    entities.insert(Position { x: 2, y: -3 }, GameObjects::Wall);
-    entities.insert(Position { x: 1, y: -3 }, GameObjects::Wall);
-    entities.insert(Position { x: 0, y: -3 }, GameObjects::Wall);
-    entities.insert(Position { x: -1, y: -3 }, GameObjects::Wall);
-    entities.insert(Position { x: -2, y: -3 }, GameObjects::Wall);
+    for x in -2..4 {
+        entities.insert(Position { x, y: 3 }, GameObjects::Wall);
+        entities.insert(Position { x, y: -3 }, GameObjects::Wall);
+    };
+
     App::new()
         .insert_resource(InputTimer(Timer::from_seconds(
             MOVE_DELAY,
@@ -106,31 +102,6 @@ fn keyboard_input_system(
     }
 }
 
-#[derive(Resource)]
-struct InputTimer(Timer);
-
-#[derive(PartialEq, Eq, Hash)]
-enum GameObjects {
-    Player,
-    Box,
-    Wall,
-    Empty,
-}
-
-#[derive(Resource)]
-struct Board {
-    entities: HashMap<Position, GameObjects>,
-}
-
-#[derive(Component, Clone, Copy)]
-enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
-    None,
-}
-
 fn setup_move(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -138,7 +109,7 @@ fn setup_move(
     asset_server: Res<AssetServer>,
 ) {
     commands.spawn(Camera2dBundle::default());
-    let player_image: Handle<Image> = asset_server.load("textures/player.png");
+    let player_image: Handle<Image> = asset_server.load(PLAYER_TEXTURE);
     commands.spawn((
         Player {
             position: Position { x: 0, y: 0 },
@@ -167,7 +138,7 @@ fn setup_background(
     mut materials: ResMut<Assets<ColorMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    let tile_image: Handle<Image> = asset_server.load("textures/tile.png");
+    let tile_image: Handle<Image> = asset_server.load(TILE_TEXTURE);
     for i in 1..((BOX_HEIGHT / TILE_SIZE) as u32) {
         for j in 1..((BOX_WIDTH / TILE_SIZE) as u32) {
             commands.spawn(MaterialMesh2dBundle {
@@ -196,7 +167,7 @@ fn setup_walls(
     asset_server: Res<AssetServer>,
     board: Res<Board>,
 ) {
-    let wall_image: Handle<Image> = asset_server.load("textures/wall.png");
+    let wall_image: Handle<Image> = asset_server.load(WALL_TEXTURE);
     for (position, _element) in &board.entities {
         commands.spawn(MaterialMesh2dBundle {
             mesh: meshes
@@ -214,15 +185,4 @@ fn setup_walls(
             ..default()
         });
     }
-}
-
-#[derive(Component)]
-struct Player {
-    position: Position,
-}
-
-#[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
-struct Position {
-    x: i32,
-    y: i32,
 }
