@@ -1,22 +1,22 @@
-use bevy::{ prelude::Component };
+use bevy::prelude::Component;
 
 #[derive(PartialEq, Eq, Hash)]
 pub enum GameObjects {
     Player,
     Box,
     Wall,
-    Empty
+    Empty,
 }
 
 #[derive(Component)]
 pub struct Player {
-    pub position: Position
+    pub position: Position,
 }
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
     pub x: i32,
-    pub y: i32
+    pub y: i32,
 }
 
 #[derive(Component, Clone, Copy)]
@@ -25,5 +25,5 @@ pub enum Direction {
     Down,
     Left,
     Right,
-    None
+    None,
 }
