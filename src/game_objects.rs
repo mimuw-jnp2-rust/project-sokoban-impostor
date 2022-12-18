@@ -15,8 +15,9 @@ pub struct Player {
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
+    pub movable: bool,
     pub x: i32,
-    pub y: i32,
+    pub y: i32
 }
 
 #[derive(Component, Clone, Copy)]

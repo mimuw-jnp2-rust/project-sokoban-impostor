@@ -1,4 +1,5 @@
 use bevy::{prelude::*, utils::Duration};
+use crate::Position;
 
 use crate::{
     consts::TILE_SIZE,
@@ -10,7 +11,7 @@ fn update_pos(
     mut sprite_position: Query<(&mut Player, &mut Transform)>,
     direction: Direction,
     mut timer: ResMut<InputTimer>,
-    board: Res<Board>,
+    mut board: Res<Board>,
 ) {
     let (mut player, mut transform) = sprite_position.single_mut();
     let mut new_position = player.position;
@@ -33,15 +34,28 @@ fn update_pos(
         }
         Direction::None => (),
     }
-    if *(board
+
+    let object_blocking = board
         .entities
         .get(&new_position)
-        .unwrap_or(&GameObjects::Empty))
-        == GameObjects::Empty
-    {
+        .unwrap_or(&GameObjects::Empty);
+    
+    let possibly_box_position = Position{x:  player.position.x, y:  player.position.y, movable: true};
+
+    let maybe_box_object = board
+        .entities
+        .get(&possibly_box_position)
+        .unwrap_or(&GameObjects::Empty);
+
+    if *object_blocking == GameObjects::Empty {
         player.position = new_position;
         [transform.translation.x, transform.translation.y] =
             [player.position.x, player.position.y].map(|el| TILE_SIZE * el as f32);
+    }
+
+    if *maybe_box_object == GameObjects::Box {
+        println!("BOX");
+        board.entities[&possibly_box_position] = GameObjects::Empty;
     }
 }
 
@@ -64,7 +78,7 @@ pub fn keyboard_input_system(
     sprite_position: Query<(&mut Player, &mut Transform)>,
     time: Res<Time>,
     mut timer: ResMut<InputTimer>,
-    board: Res<Board>,
+    mut board: Res<Board>,
 ) {
     // move is only possible once every MOVE_DELAY seconds so only when timer is finished
     if timer.0.finished() {
