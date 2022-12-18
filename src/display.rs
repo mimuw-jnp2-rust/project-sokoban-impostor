@@ -35,7 +35,7 @@ pub fn setup_background(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     asset_server: Res<AssetServer>,
-    board: Res<Board>,
+    board: ResMut<Board>,
 ) {
     let tile_image: Handle<Image> = asset_server.load(TILE_TEXTURE);
     let wall_image: Handle<Image> = asset_server.load(WALL_TEXTURE);

@@ -11,7 +11,7 @@ fn update_pos(
     mut sprite_position: Query<(&mut Player, &mut Transform)>,
     direction: Direction,
     mut timer: ResMut<InputTimer>,
-    mut board: Res<Board>,
+    mut board: ResMut<Board>,
 ) {
     let (mut player, mut transform) = sprite_position.single_mut();
     let mut new_position = player.position;
@@ -54,8 +54,8 @@ fn update_pos(
     }
 
     if *maybe_box_object == GameObjects::Box {
+        board.entities.remove(&possibly_box_position);
         println!("BOX");
-        board.entities[&possibly_box_position] = GameObjects::Empty;
     }
 }
 
@@ -78,7 +78,7 @@ pub fn keyboard_input_system(
     sprite_position: Query<(&mut Player, &mut Transform)>,
     time: Res<Time>,
     mut timer: ResMut<InputTimer>,
-    mut board: Res<Board>,
+    board: ResMut<Board>,
 ) {
     // move is only possible once every MOVE_DELAY seconds so only when timer is finished
     if timer.0.finished() {

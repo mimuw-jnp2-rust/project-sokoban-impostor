@@ -2,7 +2,6 @@ use bevy::prelude::Component;
 
 #[derive(PartialEq, Eq, Hash)]
 pub enum GameObjects {
-    Player,
     Box,
     Wall,
     Empty,
