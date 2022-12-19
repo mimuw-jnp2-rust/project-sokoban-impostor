@@ -1,5 +1,5 @@
 use crate::consts::*;
-use crate::game_objects::{Box, GameObjects, Player, Position};
+use crate::game_objects::{Background, Box, GameObjects, Player, Position, Wall};
 use crate::resources::{Board, MapSize, StartingPosition};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
@@ -7,31 +7,42 @@ fn offset_coordinate(coord: u32, max: u32) -> i32 {
     coord as i32 - (max as i32 / 2)
 }
 
-fn spawn_tile_with_texture(
+//render an object with a given image and position
+fn spawn_entity<T>(
+    component: T,
     commands: &mut Commands,
     meshes: &mut ResMut<Assets<Mesh>>,
     materials: &mut ResMut<Assets<ColorMaterial>>,
     image: Handle<Image>,
     position: Position,
     z_index: f32,
-) {
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes
-            .add(Mesh::from(shape::Quad::new(Vec2 {
-                x: TILE_SIZE,
-                y: TILE_SIZE,
-            })))
-            .into(),
-        material: materials.add(image.into()),
-        transform: Transform::from_xyz(
-            position.x as f32 * TILE_SIZE,
-            position.y as f32 * TILE_SIZE,
-            z_index,
-        ),
-        ..default()
-    });
+) -> Entity
+where
+    T: Component,
+{
+    commands
+        .spawn((
+            component,
+            MaterialMesh2dBundle {
+                mesh: meshes
+                    .add(Mesh::from(shape::Quad::new(Vec2 {
+                        x: TILE_SIZE,
+                        y: TILE_SIZE,
+                    })))
+                    .into(),
+                material: materials.add(image.into()),
+                transform: Transform::from_xyz(
+                    position.x as f32 * TILE_SIZE,
+                    position.y as f32 * TILE_SIZE,
+                    z_index,
+                ),
+                ..default()
+            },
+        ))
+        .id()
 }
 
+//render the entire map based on Board
 pub fn setup_background(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -47,6 +58,7 @@ pub fn setup_background(
     let top_border = offset_coordinate(map_size.height - 1, map_size.height);
     let left_border = offset_coordinate(0, map_size.width);
     let right_border = offset_coordinate(map_size.width - 1, map_size.width);
+    // render all objects found in board
     for i in bottom_border..(top_border + 1) {
         for j in left_border..(right_border + 1) {
             let entity = board
@@ -55,18 +67,21 @@ pub fn setup_background(
                 .unwrap_or(&GameObjects::Empty);
             match entity {
                 GameObjects::Box(None) => {
-                    let result = spawn_box(
+                    let result = spawn_entity(
+                        Box,
                         &mut commands,
                         &mut meshes,
                         &mut materials,
                         box_image.clone(),
                         Position { x: j, y: i },
+                        BOX_Z_INDEX,
                     );
                     *board.entities.get_mut(&Position { x: j, y: i }).unwrap() =
                         GameObjects::Box(Some(result));
                 }
                 GameObjects::Wall => {
-                    spawn_tile_with_texture(
+                    spawn_entity(
+                        Wall,
                         &mut commands,
                         &mut meshes,
                         &mut materials,
@@ -78,7 +93,8 @@ pub fn setup_background(
                 _ => (),
             }
             //spawn background for every tile
-            spawn_tile_with_texture(
+            spawn_entity(
+                Background,
                 &mut commands,
                 &mut meshes,
                 &mut materials,
@@ -88,8 +104,10 @@ pub fn setup_background(
             );
         }
     }
+    //spawn horizontal border for the level and insert it to board
     for y in (bottom_border - 1)..(top_border + 2) {
-        spawn_tile_with_texture(
+        spawn_entity(
+            Wall,
             &mut commands,
             &mut meshes,
             &mut materials,
@@ -100,7 +118,8 @@ pub fn setup_background(
             },
             WALL_Z_INDEX,
         );
-        spawn_tile_with_texture(
+        spawn_entity(
+            Wall,
             &mut commands,
             &mut meshes,
             &mut materials,
@@ -126,8 +145,10 @@ pub fn setup_background(
             GameObjects::Wall,
         );
     }
+    //spawn vertical borders for the level and insert it to board
     for x in (left_border - 1)..(right_border + 2) {
-        spawn_tile_with_texture(
+        spawn_entity(
+            Wall,
             &mut commands,
             &mut meshes,
             &mut materials,
@@ -138,7 +159,8 @@ pub fn setup_background(
             },
             WALL_Z_INDEX,
         );
-        spawn_tile_with_texture(
+        spawn_entity(
+            Wall,
             &mut commands,
             &mut meshes,
             &mut materials,
@@ -164,36 +186,9 @@ pub fn setup_background(
             GameObjects::Wall,
         );
     }
-}
-pub fn spawn_box(
-    commands: &mut Commands,
-    meshes: &mut ResMut<Assets<Mesh>>,
-    materials: &mut ResMut<Assets<ColorMaterial>>,
-    image: Handle<Image>,
-    position: Position,
-) -> Entity {
-    commands
-        .spawn((
-            Box,
-            MaterialMesh2dBundle {
-                mesh: meshes
-                    .add(Mesh::from(shape::Quad::new(Vec2 {
-                        x: TILE_SIZE,
-                        y: TILE_SIZE,
-                    })))
-                    .into(),
-                material: materials.add(image.into()),
-                transform: Transform::from_xyz(
-                    position.x as f32 * TILE_SIZE,
-                    position.y as f32 * TILE_SIZE,
-                    BOX_Z_INDEX,
-                ),
-                ..default()
-            },
-        ))
-        .id()
 }
 
+//spawn player entity and setup the camera
 pub fn setup_move(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -203,22 +198,15 @@ pub fn setup_move(
 ) {
     commands.spawn(Camera2dBundle::default());
     let player_image: Handle<Image> = asset_server.load(PLAYER_TEXTURE);
-    let [starting_x, starting_y] = [starting_position.position.x, starting_position.position.y]
-        .map(|el| TILE_SIZE * el as f32);
-    commands.spawn((
+    spawn_entity(
         Player {
             position: starting_position.position,
         },
-        MaterialMesh2dBundle {
-            mesh: meshes
-                .add(Mesh::from(shape::Quad::new(Vec2 {
-                    x: TILE_SIZE,
-                    y: TILE_SIZE,
-                })))
-                .into(),
-            material: materials.add(player_image.clone().into()),
-            transform: Transform::from_xyz(starting_x, starting_y, PLAYER_Z_INDEX),
-            ..default()
-        },
-    ));
+        &mut commands,
+        &mut meshes,
+        &mut materials,
+        player_image,
+        starting_position.position,
+        PLAYER_Z_INDEX,
+    );
 }

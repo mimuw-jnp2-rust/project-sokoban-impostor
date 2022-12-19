@@ -7,22 +7,17 @@ use crate::{
     resources::{Board, InputTimer},
 };
 
-fn move_box(
-    boxes: &mut Query<&mut Transform, With<Box>>,
-    board: &mut ResMut<Board>,
-    current_entity: Entity,
-    next_position: Position,
-    old_position: Position,
-) {
-    let mut transform = boxes
-        .get_mut(current_entity)
-        .expect("Box not found in board");
-    [transform.translation.x, transform.translation.y] =
-        [next_position.x, next_position.y].map(|el| TILE_SIZE * el as f32);
-    board.entities.remove(&old_position);
-    board
-        .entities
-        .insert(next_position, GameObjects::Box(Some(current_entity)));
+fn move_box(boxes: &mut Query<&mut Transform, With<Box>>, board: &mut ResMut<Board>, current_entity: Entity, next_position: Position, old_position: Position) {
+
+                let mut transform = boxes
+                    .get_mut(current_entity)
+                    .expect("Box not found in board");
+                [transform.translation.x, transform.translation.y] =
+                    [next_position.x, next_position.y].map(|el| TILE_SIZE * el as f32);
+                board.entities.remove(&old_position);
+                board
+                    .entities
+                    .insert(next_position, GameObjects::Box(Some(current_entity)));
 }
 
 fn update_box(

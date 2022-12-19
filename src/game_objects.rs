@@ -7,6 +7,12 @@ pub enum GameObjects {
     Empty,
 }
 
+#[derive(Component)]
+pub struct Wall;
+
+#[derive(Component)]
+pub struct Background;
+
 #[derive(Component, PartialEq, Eq, Hash)]
 pub struct Box;
 
