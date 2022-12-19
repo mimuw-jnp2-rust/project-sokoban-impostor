@@ -13,3 +13,14 @@ pub struct InputTimer(pub Timer);
 pub struct Board {
     pub entities: HashMap<Position, GameObjects>,
 }
+
+#[derive(Resource)]
+pub struct StartingPosition {
+    pub position: Position,
+}
+
+#[derive(Resource)]
+pub struct MapSize {
+    pub height: u32,
+    pub width: u32,
+}

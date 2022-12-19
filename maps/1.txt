@@ -1,0 +1,16 @@
+15 15
+               
+  b     b      
+               
+  b  w  w      
+               
+  b  w    w    
+   b       wwww
+       b       
+   b w    w    
+          p    
+        b      
+      b   w    
+   b           
+       b w     
+               
