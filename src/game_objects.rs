@@ -1,11 +1,14 @@
-use bevy::prelude::Component;
+use bevy::prelude::{Component, Entity};
 
 #[derive(PartialEq, Eq, Hash)]
 pub enum GameObjects {
-    Box,
+    Box(Option<Entity>),
     Wall,
     Empty,
 }
+
+#[derive(Component, PartialEq, Eq, Hash)]
+pub struct Box;
 
 #[derive(Component)]
 pub struct Player {
@@ -14,12 +17,35 @@ pub struct Player {
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
-    pub movable: bool,
     pub x: i32,
-    pub y: i32
+    pub y: i32,
 }
 
-#[derive(Component, Clone, Copy)]
+impl Position {
+    pub fn neighbour(&self, dir: Direction) -> Position {
+        match dir {
+            Direction::Up => Position {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Direction::Down => Position {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Direction::Left => Position {
+                x: self.x - 1,
+                y: self.y,
+            },
+            Direction::Right => Position {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Direction::None => self.clone(),
+        }
+    }
+}
+
+#[derive(Component, Clone, Copy, PartialEq)]
 pub enum Direction {
     Up,
     Down,
