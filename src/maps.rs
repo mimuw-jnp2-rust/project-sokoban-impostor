@@ -29,7 +29,7 @@ pub fn load_starting_map(
                 .parse::<u32>()
                 .expect("Width not a number");
             x = -(width as i32 / 2);
-            y = -(height as i32 / 2);
+            y = height as i32 / 2;
         } else {
             for character in line.chars() {
                 match character {
@@ -53,7 +53,7 @@ pub fn load_starting_map(
                 }
                 x += 1;
             }
-            y += 1;
+            y -= 1;
             x = -(width as i32 / 2);
         }
     }

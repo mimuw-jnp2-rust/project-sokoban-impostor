@@ -1,8 +1,8 @@
 15 15
                
-  b     b      
-               
-  b  w  w      
+  b     b  b   
+     bbbbbbbbb 
+  b  w  w   b  
                
   b  w    w    
    b       wwww

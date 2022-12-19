@@ -2,6 +2,11 @@ use crate::consts::*;
 use crate::game_objects::{Box, GameObjects, Player, Position};
 use crate::resources::{Board, MapSize, StartingPosition};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+
+fn offset_coordinate(coord: u32, max: u32) -> i32 {
+    coord as i32 - (max as i32 / 2)
+}
+
 fn spawn_tile_with_texture(
     commands: &mut Commands,
     meshes: &mut ResMut<Assets<Mesh>>,
@@ -38,8 +43,12 @@ pub fn setup_background(
     let tile_image: Handle<Image> = asset_server.load(TILE_TEXTURE);
     let wall_image: Handle<Image> = asset_server.load(WALL_TEXTURE);
     let box_image: Handle<Image> = asset_server.load(BOX_TEXTURE);
-    for i in (-(map_size.height as i32) / 2)..(map_size.height as i32 / 2) {
-        for j in (-(map_size.width as i32) / 2)..(map_size.width as i32 / 2) {
+    let bottom_border = offset_coordinate(0, map_size.height);
+    let top_border = offset_coordinate(map_size.height - 1, map_size.height);
+    let left_border = offset_coordinate(0, map_size.width);
+    let right_border = offset_coordinate(map_size.width - 1, map_size.width);
+    for i in bottom_border..(top_border + 1) {
+        for j in left_border..(right_border + 1) {
             let entity = board
                 .entities
                 .get(&Position { x: j, y: i })
@@ -79,16 +88,14 @@ pub fn setup_background(
             );
         }
     }
-    for y in (-(map_size.height as i32) / 2 - 1)..(map_size.height as i32 / 2 + 1) {
-        let left_border_index = -(map_size.width as i32) / 2 - 1;
-        let right_border_index = map_size.width as i32 / 2;
+    for y in (bottom_border - 1)..(top_border + 2) {
         spawn_tile_with_texture(
             &mut commands,
             &mut meshes,
             &mut materials,
             wall_image.clone(),
             Position {
-                x: left_border_index,
+                x: left_border - 1,
                 y,
             },
             WALL_Z_INDEX,
@@ -99,29 +106,27 @@ pub fn setup_background(
             &mut materials,
             wall_image.clone(),
             Position {
-                x: right_border_index,
+                x: right_border + 1,
                 y,
             },
             WALL_Z_INDEX,
         );
         board.entities.insert(
             Position {
-                x: left_border_index,
+                x: left_border - 1,
                 y,
             },
             GameObjects::Wall,
         );
         board.entities.insert(
             Position {
-                x: right_border_index,
+                x: right_border + 1,
                 y,
             },
             GameObjects::Wall,
         );
     }
-    for x in (-(map_size.width as i32) / 2 - 1)..(map_size.width as i32 / 2 + 1) {
-        let bottom_border_index = -(map_size.height as i32) / 2 - 1;
-        let top_border_index = map_size.height as i32 / 2;
+    for x in (left_border - 1)..(right_border + 2) {
         spawn_tile_with_texture(
             &mut commands,
             &mut meshes,
@@ -129,7 +134,7 @@ pub fn setup_background(
             wall_image.clone(),
             Position {
                 x,
-                y: top_border_index,
+                y: top_border + 1,
             },
             WALL_Z_INDEX,
         );
@@ -140,21 +145,21 @@ pub fn setup_background(
             wall_image.clone(),
             Position {
                 x,
-                y: bottom_border_index,
+                y: bottom_border - 1,
             },
             WALL_Z_INDEX,
         );
         board.entities.insert(
             Position {
                 x,
-                y: top_border_index,
+                y: top_border + 1,
             },
             GameObjects::Wall,
         );
         board.entities.insert(
             Position {
                 x,
-                y: bottom_border_index,
+                y: bottom_border - 1,
             },
             GameObjects::Wall,
         );
