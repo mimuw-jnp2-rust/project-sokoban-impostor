@@ -24,3 +24,9 @@ pub struct MapSize {
     pub height: u32,
     pub width: u32,
 }
+
+#[derive(Resource)]
+pub struct CurrentLevel {
+    pub level_number: u32,
+    pub level_map_str: &'static str,
+}

@@ -1,0 +1,9 @@
+12 13
+ b  wb wb ww
+ b  wb wb ww
+ b  wb wb ww
+ b  wb wp ww
+ b  wb wb ww
+ b  wb wb ww
+ b  wb wb ww
+ b  wb wb ww

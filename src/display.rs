@@ -76,8 +76,10 @@ pub fn setup_background(
                         Position { x: j, y: i },
                         BOX_Z_INDEX,
                     );
-                    *board.entities.get_mut(&Position { x: j, y: i }).unwrap() =
-                        GameObjects::Box(Some(result));
+                    *board
+                        .entities
+                        .get_mut(&Position { x: j, y: i })
+                        .expect("Position not found in board") = GameObjects::Box(Some(result));
                 }
                 GameObjects::Wall => {
                     spawn_entity(
@@ -196,7 +198,6 @@ pub fn setup_move(
     asset_server: Res<AssetServer>,
     starting_position: Res<StartingPosition>,
 ) {
-    commands.spawn(Camera2dBundle::default());
     let player_image: Handle<Image> = asset_server.load(PLAYER_TEXTURE);
     spawn_entity(
         Player {
