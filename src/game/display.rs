@@ -1,9 +1,9 @@
 use super::{
-    game_objects::{Background, Box, GameObjects, Player, Position, Wall},
+    game_objects::{Background, Box, GameObjects, Goal, Player, Position, Wall},
     GameItem,
 };
-use crate::consts::*;
 use crate::resources::{Board, MapSize, StartingPosition};
+use crate::{consts::*, resources::Goals};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
 fn offset_coordinate(coord: u32, max: u32) -> i32 {
@@ -54,10 +54,12 @@ pub fn setup_background(
     asset_server: Res<AssetServer>,
     mut board: ResMut<Board>,
     map_size: Res<MapSize>,
+    goals: Res<Goals>,
 ) {
-    let tile_image: Handle<Image> = asset_server.load(TILE_TEXTURE);
-    let wall_image: Handle<Image> = asset_server.load(WALL_TEXTURE);
-    let box_image: Handle<Image> = asset_server.load(BOX_TEXTURE);
+    let tile_image = asset_server.load(TILE_TEXTURE);
+    let wall_image = asset_server.load(WALL_TEXTURE);
+    let box_image = asset_server.load(BOX_TEXTURE);
+    let goal_image = asset_server.load(GOAL_TEXTURE);
     let bottom_border = offset_coordinate(0, map_size.height);
     let top_border = offset_coordinate(map_size.height - 1, map_size.height);
     let left_border = offset_coordinate(0, map_size.width);
@@ -190,6 +192,17 @@ pub fn setup_background(
                 y: bottom_border - 1,
             },
             GameObjects::Wall,
+        );
+    }
+    for position in goals.goals.iter() {
+        spawn_entity(
+            Goal,
+            &mut commands,
+            &mut meshes,
+            &mut materials,
+            goal_image.clone(),
+            *position,
+            GOAL_Z_INDEX,
         );
     }
 }

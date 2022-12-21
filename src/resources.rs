@@ -15,6 +15,11 @@ pub struct Board {
 }
 
 #[derive(Resource)]
+pub struct Goals {
+    pub goals: Vec<Position>,
+}
+
+#[derive(Resource)]
 pub struct StartingPosition {
     pub position: Position,
 }

@@ -3,4 +3,5 @@ pub enum GameState {
     Game,
     MainMenu,
     LevelSelect,
+    Victory,
 }

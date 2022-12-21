@@ -2,7 +2,7 @@ use bevy::{prelude::*, utils::HashMap};
 use consts::MAP_NAMES;
 use game::GamePlugin;
 use menu::MenusPlugin;
-use resources::{CurrentLevel, MapSize, StartingPosition};
+use resources::{CurrentLevel, Goals, MapSize, StartingPosition};
 mod consts;
 mod game;
 mod menu;
@@ -33,6 +33,7 @@ fn main() {
             level_number: 1,
             level_map_str: MAP_NAMES[0],
         })
+        .insert_resource(Goals { goals: Vec::new() })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)
         .add_plugin(GamePlugin)

@@ -3,14 +3,14 @@
   b     b  b   
      bbbbbbbbb 
   b  w  w   b  
-               
-  b  w    w    
+           g   
+  b  w    w   g
    b       wwww
        b       
    b w    w    
-          p    
-        b      
-      b   w    
+     g    p  g 
+   g    b      
+ g    b   w g  
    b           
-       b w     
+ g     b w  g  
                

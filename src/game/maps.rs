@@ -1,5 +1,5 @@
 use super::game_objects::{GameObjects, Position};
-use crate::resources::{Board, CurrentLevel, MapSize, StartingPosition};
+use crate::resources::{Board, CurrentLevel, Goals, MapSize, StartingPosition};
 use bevy::prelude::*;
 use std::fs;
 
@@ -8,6 +8,7 @@ pub fn load_starting_map(
     mut starting_position: ResMut<StartingPosition>,
     mut map_size: ResMut<MapSize>,
     current_level: Res<CurrentLevel>,
+    mut goals: ResMut<Goals>,
 ) {
     let map_text = fs::read_to_string(current_level.level_map_str).expect("Did not find map file!");
     println!("{:?}", map_text);
@@ -50,6 +51,9 @@ pub fn load_starting_map(
                     *starting_position = StartingPosition {
                         position: Position { x, y },
                     }
+                }
+                'g' => {
+                    goals.goals.push(Position { x, y });
                 }
                 _ => (),
             }

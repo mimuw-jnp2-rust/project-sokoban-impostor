@@ -3,7 +3,7 @@
  b  wb wb ww
  b  wb wb ww
  b  wb wp ww
- b  wb wb ww
- b  wb wb ww
+ b gwb wb ww
+ b gwb wb ww
  b  wb wb ww
  b  wb wb ww

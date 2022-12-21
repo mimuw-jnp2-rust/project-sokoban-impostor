@@ -1,10 +1,24 @@
 use bevy::prelude::{Component, Entity};
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Eq, Hash)]
 pub enum GameObjects {
     Box(Option<Entity>),
     Wall,
     Empty,
+}
+
+#[derive(Component)]
+pub struct Goal;
+
+impl PartialEq for GameObjects {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Box(_), Self::Box(_)) => true, //we do not care about the insides of Box when comapring
+            (Self::Wall, Self::Wall) => true,
+            (Self::Empty, Self::Empty) => true,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Component)]
