@@ -11,7 +11,6 @@ pub fn load_starting_map(
     mut goals: ResMut<Goals>,
 ) {
     let map_text = fs::read_to_string(current_level.level_map_str).expect("Did not find map file!");
-    println!("{:?}", map_text);
     let mut lines = map_text.lines();
     let mut split = lines.next().expect("Map file is broken").split(" ");
 

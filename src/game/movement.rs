@@ -89,14 +89,16 @@ fn update_pos(
     }
 }
 
-fn set_direction(keyboard_input: Res<Input<KeyCode>>) -> Direction {
-    if keyboard_input.pressed(KeyCode::Up) || keyboard_input.pressed(KeyCode::W) {
+fn set_direction(
+    keyboard_input: Res<Input<KeyCode>>,
+) -> Direction {
+    if keyboard_input.any_pressed([KeyCode::Up, KeyCode::W]) {
         Direction::Up
-    } else if keyboard_input.pressed(KeyCode::Down) || keyboard_input.pressed(KeyCode::S) {
+    } else if keyboard_input.any_pressed([KeyCode::Down, KeyCode::S]) {
         Direction::Down
-    } else if keyboard_input.pressed(KeyCode::Left) || keyboard_input.pressed(KeyCode::A) {
+    } else if keyboard_input.any_pressed([KeyCode::Left, KeyCode::A]) {
         Direction::Left
-    } else if keyboard_input.pressed(KeyCode::Right) || keyboard_input.pressed(KeyCode::D) {
+    } else if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D]) {
         Direction::Right
     } else {
         Direction::None
