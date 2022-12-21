@@ -1,5 +1,8 @@
+use super::{
+    game_objects::{Background, Box, GameObjects, Player, Position, Wall},
+    GameItem,
+};
 use crate::consts::*;
-use crate::game_objects::{Background, Box, GameObjects, Player, Position, Wall};
 use crate::resources::{Board, MapSize, StartingPosition};
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
@@ -39,6 +42,7 @@ where
                 ..default()
             },
         ))
+        .insert(GameItem)
         .id()
 }
 

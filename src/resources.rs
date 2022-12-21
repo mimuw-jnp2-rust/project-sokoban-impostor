@@ -3,8 +3,8 @@ use bevy::{
     utils::HashMap,
 };
 
-use crate::game_objects::GameObjects;
-use crate::game_objects::Position;
+use crate::game::game_objects::GameObjects;
+use crate::game::game_objects::Position;
 
 #[derive(Resource)]
 pub struct InputTimer(pub Timer);

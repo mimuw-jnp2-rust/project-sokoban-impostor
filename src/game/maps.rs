@@ -1,4 +1,4 @@
-use crate::game_objects::Position;
+use super::game_objects::{GameObjects, Position};
 use crate::resources::{Board, CurrentLevel, MapSize, StartingPosition};
 use bevy::prelude::*;
 use std::fs;
@@ -27,7 +27,7 @@ pub fn load_starting_map(
         .expect("Width not a number");
 
     let mut x = -(width as i32 / 2);
-    let mut y = (height as i32 - 1)/ 2;
+    let mut y = (height as i32 - 1) / 2;
 
     for line in lines {
         for character in line.chars() {
@@ -39,15 +39,12 @@ pub fn load_starting_map(
             }
             match character {
                 'b' => {
-                    board.entities.insert(
-                        Position { x, y },
-                        crate::game_objects::GameObjects::Box(None),
-                    );
-                }
-                'w' => {
                     board
                         .entities
-                        .insert(Position { x, y }, crate::game_objects::GameObjects::Wall);
+                        .insert(Position { x, y }, GameObjects::Box(None));
+                }
+                'w' => {
+                    board.entities.insert(Position { x, y }, GameObjects::Wall);
                 }
                 'p' => {
                     *starting_position = StartingPosition {

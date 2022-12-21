@@ -4,16 +4,12 @@ use game::GamePlugin;
 use menu::MenusPlugin;
 use resources::{CurrentLevel, MapSize, StartingPosition};
 mod consts;
-mod display;
 mod game;
-mod game_objects;
-mod maps;
 mod menu;
-mod movement;
 mod resources;
 mod state;
 use crate::consts::MOVE_DELAY;
-use crate::game_objects::Position;
+use crate::game::game_objects::Position;
 use crate::resources::{Board, InputTimer};
 use crate::state::GameState;
 

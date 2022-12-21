@@ -1,11 +1,9 @@
 use crate::Position;
 use bevy::{prelude::*, utils::Duration};
 
-use crate::{
-    consts::TILE_SIZE,
-    game_objects::{Box, Direction, GameObjects, Player},
-    resources::{Board, InputTimer},
-};
+use super::game_objects::{Box, Direction, GameObjects, Player};
+use crate::consts::TILE_SIZE;
+use crate::resources::{Board, InputTimer};
 
 fn move_box(
     boxes: &mut Query<&mut Transform, With<Box>>,
