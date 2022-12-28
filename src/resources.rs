@@ -1,7 +1,7 @@
 use bevy::{prelude::*, utils::HashMap};
 
 use crate::game::game_objects::GameObjects;
-use crate::game::game_objects::{Position, Direction};
+use crate::game::game_objects::{Direction, Position};
 
 #[derive(Resource)]
 pub struct InputTimer(pub Timer);
@@ -19,7 +19,7 @@ pub struct Goals {
 
 #[derive(Resource)]
 pub struct MovementData {
-    pub data: Option<MovementEntities>
+    pub data: Option<MovementEntities>,
 }
 
 pub struct MovementEntities {

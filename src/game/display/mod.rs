@@ -5,7 +5,6 @@ use render::spawn_player;
 use crate::state::DisplayState;
 
 pub mod background;
-pub mod movement;
 pub mod render;
 
 pub struct DisplayPlugin;

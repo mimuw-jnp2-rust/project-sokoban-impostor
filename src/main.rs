@@ -1,8 +1,8 @@
 use bevy::{prelude::*, utils::HashMap};
 use consts::{MAP_NAMES, MOVE_ANIMATION_TIME};
+use game::movement::MovementPlugin;
 use game::display::DisplayPlugin;
 use game::GamePlugin;
-use game::display::movement::MovementPlugin;
 use menu::MenusPlugin;
 use resources::{CurrentLevel, Goals, MapSize, MovementData};
 use state::GameState;
@@ -33,7 +33,7 @@ fn main() {
             level_number: 1,
             level_map_str: MAP_NAMES[0],
         })
-        .insert_resource(MovementData {data: None})
+        .insert_resource(MovementData { data: None })
         .insert_resource(Goals { goals: Vec::new() })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)

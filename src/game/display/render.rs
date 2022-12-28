@@ -45,7 +45,7 @@ where
         .id()
 }
 
-//spawn player entity and setup the camera
+//spawn player entity
 pub fn spawn_player(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,

@@ -9,8 +9,8 @@ pub mod display;
 mod exit;
 pub mod game_objects;
 mod maps;
-mod movement;
 mod victory;
+pub mod movement;
 
 #[derive(Component)]
 pub struct GameItem;
@@ -20,20 +20,22 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_enter(DisplayState::Game).with_system(
-                load_starting_map
-                    .before(spawn_player)
-                    .before(setup_background),
-            )
-            .with_system(set_game_state),
+            SystemSet::on_enter(DisplayState::Game)
+                .with_system(
+                    load_starting_map
+                        .before(spawn_player)
+                        .before(setup_background),
+                )
+                .with_system(set_game_state),
         )
         .add_system_set(
-            SystemSet::on_resume(DisplayState::Game).with_system(
-                load_starting_map
-                    .before(spawn_player)
-                    .before(setup_background)
-            )
-            .with_system(set_game_state),
+            SystemSet::on_resume(DisplayState::Game)
+                .with_system(
+                    load_starting_map
+                        .before(spawn_player)
+                        .before(setup_background),
+                )
+                .with_system(set_game_state),
         )
         .add_system_set(
             SystemSet::on_update(DisplayState::Game)
@@ -41,8 +43,16 @@ impl Plugin for GamePlugin {
                 .with_system(handle_win),
         );
 
-        app.add_system_set(SystemSet::on_exit(DisplayState::Game).with_system(exit_to_main_menu).with_system(reset_game_state))
-            .add_system_set(SystemSet::on_pause(DisplayState::Game).with_system(exit_to_main_menu).with_system(reset_game_state));
+        app.add_system_set(
+            SystemSet::on_exit(DisplayState::Game)
+                .with_system(exit_to_main_menu)
+                .with_system(reset_game_state),
+        )
+        .add_system_set(
+            SystemSet::on_pause(DisplayState::Game)
+                .with_system(exit_to_main_menu)
+                .with_system(reset_game_state),
+        );
 
         app.add_system_set(SystemSet::on_enter(DisplayState::Victory).with_system(setup_win))
             .add_system_set(SystemSet::on_resume(DisplayState::Victory).with_system(setup_win))
@@ -55,9 +65,13 @@ impl Plugin for GamePlugin {
 }
 
 fn set_game_state(mut game_state: ResMut<State<GameState>>) {
-    game_state.push(GameState::Static).expect("Could not set static game state");
+    game_state
+        .push(GameState::Static)
+        .expect("Could not set static game state");
 }
 
 fn reset_game_state(mut game_state: ResMut<State<GameState>>) {
-    game_state.push(GameState::NotInGame).expect("Could not reset game state");
+    game_state
+        .push(GameState::NotInGame)
+        .expect("Could not reset game state");
 }
