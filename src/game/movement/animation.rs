@@ -3,6 +3,18 @@ use bevy::prelude::*;
 
 use crate::game::game_objects::{*, Direction};
 
+use super::consts::{TIME_INTERVAL_1, SPEED_1, INTERVAL_DISTANCE_1};
+
+
+fn animation_weight(number: f32) -> f32 {       //this is so that the movement isn't uniform
+    if number < TIME_INTERVAL_1 {
+        number * SPEED_1
+    }
+    else {
+        (number - TIME_INTERVAL_1) * ((1. - INTERVAL_DISTANCE_1) / (1. - TIME_INTERVAL_1)) + INTERVAL_DISTANCE_1
+    }
+}
+
 fn modify_transform(
     mut transform: Mut<Transform>,
     direction: Direction,
@@ -11,16 +23,16 @@ fn modify_transform(
 ) {
     match direction {
         Direction::Down => {
-            transform.translation.y = (starting_position.y as f32 - timer.0.percent()) * TILE_SIZE;
+            transform.translation.y = (starting_position.y as f32 - animation_weight(timer.0.percent())) * TILE_SIZE;
         }
         Direction::Up => {
-            transform.translation.y = (starting_position.y as f32 + timer.0.percent()) * TILE_SIZE;
+            transform.translation.y = (starting_position.y as f32 + animation_weight(timer.0.percent())) * TILE_SIZE;
         }
         Direction::Left => {
-            transform.translation.x = (starting_position.x as f32 - timer.0.percent()) * TILE_SIZE;
+            transform.translation.x = (starting_position.x as f32 - animation_weight(timer.0.percent())) * TILE_SIZE;
         }
         Direction::Right => {
-            transform.translation.x = (starting_position.x as f32 + timer.0.percent()) * TILE_SIZE;
+            transform.translation.x = (starting_position.x as f32 + animation_weight(timer.0.percent())) * TILE_SIZE;
         }
         _ => (),
     }

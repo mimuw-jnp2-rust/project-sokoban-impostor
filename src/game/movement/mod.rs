@@ -6,6 +6,7 @@ use animation::{move_animation, end_animation};
 
 mod keyboard;
 mod animation;
+mod consts;
 
 pub struct MovementPlugin;
 
