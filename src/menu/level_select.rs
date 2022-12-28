@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     consts::{LEVEL_AMOUNT, MAIN_MENU_FONT, MAP_NAMES},
     resources::CurrentLevel,
-    state::GameState,
+    state::DisplayState,
 };
 
 use super::spawn_button::spawn_button;
@@ -64,7 +64,7 @@ pub fn setup_level_select(mut commands: Commands, asset_server: Res<AssetServer>
 }
 
 pub fn handle_level_click(
-    mut app_state: ResMut<State<GameState>>,
+    mut app_state: ResMut<State<DisplayState>>,
     mut query: Query<
         (
             &mut Interaction,
@@ -84,12 +84,12 @@ pub fn handle_level_click(
                         level_map_str: MAP_NAMES[(*number - 1) as usize],
                     };
                     app_state
-                        .push(GameState::Game)
+                        .push(DisplayState::Game)
                         .expect("Failed to load game");
                 }
                 LevelSelectItemType::Back => {
                     app_state
-                        .push(GameState::MainMenu)
+                        .push(DisplayState::MainMenu)
                         .expect("Going back to main menu failed");
                 }
             },

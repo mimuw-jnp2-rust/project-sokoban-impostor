@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     resources::{Board, Goals},
-    state::GameState,
+    state::DisplayState,
 };
 
 use super::GameItem;
@@ -20,10 +20,10 @@ pub fn exit_to_main_menu(
     }
 }
 
-pub fn handle_esc(keyboard_input: Res<Input<KeyCode>>, mut app_state: ResMut<State<GameState>>) {
+pub fn handle_esc(keyboard_input: Res<Input<KeyCode>>, mut app_state: ResMut<State<DisplayState>>) {
     if keyboard_input.pressed(KeyCode::Escape) {
         app_state
-            .push(GameState::MainMenu)
+            .push(DisplayState::MainMenu)
             .expect("Could not exit to main menu");
     }
 }

@@ -2,14 +2,18 @@ use bevy::prelude::*;
 
 use crate::consts::MAIN_MENU_FONT;
 use crate::resources::{Board, Goals};
-use crate::state::GameState;
+use crate::state::DisplayState;
 
 use super::game_objects::GameObjects;
 
 #[derive(Component)]
 pub struct VictoryItem;
 
-pub fn handle_win(goals: Res<Goals>, board: Res<Board>, mut app_state: ResMut<State<GameState>>) {
+pub fn handle_win(
+    goals: Res<Goals>,
+    board: Res<Board>,
+    mut app_state: ResMut<State<DisplayState>>,
+) {
     let mut is_win = true;
     for position in goals.goals.iter() {
         if board.entities.get(position).unwrap_or(&GameObjects::Empty) != &GameObjects::Box(None) {
@@ -18,7 +22,7 @@ pub fn handle_win(goals: Res<Goals>, board: Res<Board>, mut app_state: ResMut<St
     }
     if is_win {
         app_state
-            .push(GameState::Victory)
+            .push(DisplayState::Victory)
             .expect("Error while going to victory");
     }
 }
@@ -63,11 +67,11 @@ pub fn setup_win(mut commands: Commands, asset_server: ResMut<AssetServer>) {
 
 pub fn handle_win_click(
     keyboard_input: Res<Input<KeyCode>>,
-    mut app_state: ResMut<State<GameState>>,
+    mut app_state: ResMut<State<DisplayState>>,
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
         app_state
-            .push(GameState::MainMenu)
+            .push(DisplayState::MainMenu)
             .expect("Could not go out of victory screen");
     }
 }

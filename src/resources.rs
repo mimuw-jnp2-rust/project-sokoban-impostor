@@ -1,10 +1,7 @@
-use bevy::{
-    prelude::{Resource, Timer},
-    utils::HashMap,
-};
+use bevy::{prelude::*, utils::HashMap};
 
 use crate::game::game_objects::GameObjects;
-use crate::game::game_objects::Position;
+use crate::game::game_objects::{Position, Direction};
 
 #[derive(Resource)]
 pub struct InputTimer(pub Timer);
@@ -12,6 +9,7 @@ pub struct InputTimer(pub Timer);
 #[derive(Resource)]
 pub struct Board {
     pub entities: HashMap<Position, GameObjects>,
+    pub player_position: Position,
 }
 
 #[derive(Resource)]
@@ -20,8 +18,14 @@ pub struct Goals {
 }
 
 #[derive(Resource)]
-pub struct StartingPosition {
-    pub position: Position,
+pub struct MovementData {
+    pub data: Option<MovementEntities>
+}
+
+pub struct MovementEntities {
+    pub boxes_data: Vec<(Entity, Position)>,
+    pub player_data: (Entity, Position),
+    pub direction: Direction,
 }
 
 #[derive(Resource)]

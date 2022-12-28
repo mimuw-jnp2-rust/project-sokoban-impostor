@@ -1,7 +1,7 @@
 use bevy::{app::AppExit, prelude::*};
 
 use super::spawn_button::spawn_button;
-use crate::{consts::MAIN_MENU_FONT, state::GameState};
+use crate::{consts::MAIN_MENU_FONT, state::DisplayState};
 
 #[derive(Component)]
 pub struct MainMenuItem;
@@ -19,7 +19,7 @@ pub fn delete_main_menu(mut commands: Commands, query: Query<Entity, With<MainMe
 }
 
 pub fn handle_menu_click(
-    mut app_state: ResMut<State<GameState>>,
+    mut app_state: ResMut<State<DisplayState>>,
     mut query: Query<
         (&mut Interaction, &mut BackgroundColor, &mut MenuItemType),
         With<MenuItemType>,
@@ -31,7 +31,7 @@ pub fn handle_menu_click(
             Interaction::Clicked => match item.as_ref() {
                 MenuItemType::LevelSelect => {
                     app_state
-                        .push(GameState::LevelSelect)
+                        .push(DisplayState::LevelSelect)
                         .expect("Could not load level select");
                 }
                 MenuItemType::Exit => {

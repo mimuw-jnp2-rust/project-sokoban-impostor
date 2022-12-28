@@ -1,49 +1,13 @@
-use super::{
-    game_objects::{Background, Box, GameObjects, Goal, Player, Position, Wall},
-    GameItem,
-};
-use crate::resources::{Board, MapSize, StartingPosition};
-use crate::{consts::*, resources::Goals};
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy::prelude::*;
+
+use crate::consts::*;
+use crate::game::game_objects::*;
+use crate::resources::{Board, Goals, MapSize};
+
+use super::render::spawn_entity;
 
 fn offset_coordinate(coord: u32, max: u32) -> i32 {
     coord as i32 - (max as i32 / 2)
-}
-
-//render an object with a given image and position
-fn spawn_entity<T>(
-    component: T,
-    commands: &mut Commands,
-    meshes: &mut ResMut<Assets<Mesh>>,
-    materials: &mut ResMut<Assets<ColorMaterial>>,
-    image: Handle<Image>,
-    position: Position,
-    z_index: f32,
-) -> Entity
-where
-    T: Component,
-{
-    commands
-        .spawn((
-            component,
-            MaterialMesh2dBundle {
-                mesh: meshes
-                    .add(Mesh::from(shape::Quad::new(Vec2 {
-                        x: TILE_SIZE,
-                        y: TILE_SIZE,
-                    })))
-                    .into(),
-                material: materials.add(image.into()),
-                transform: Transform::from_xyz(
-                    position.x as f32 * TILE_SIZE,
-                    position.y as f32 * TILE_SIZE,
-                    z_index,
-                ),
-                ..default()
-            },
-        ))
-        .insert(GameItem)
-        .id()
 }
 
 //render the entire map based on Board
@@ -60,10 +24,12 @@ pub fn setup_background(
     let wall_image = asset_server.load(WALL_TEXTURE);
     let box_image = asset_server.load(BOX_TEXTURE);
     let goal_image = asset_server.load(GOAL_TEXTURE);
+
     let bottom_border = offset_coordinate(0, map_size.height);
     let top_border = offset_coordinate(map_size.height - 1, map_size.height);
     let left_border = offset_coordinate(0, map_size.width);
     let right_border = offset_coordinate(map_size.width - 1, map_size.width);
+
     // render all objects found in board
     for i in bottom_border..(top_border + 1) {
         for j in left_border..(right_border + 1) {
@@ -205,26 +171,4 @@ pub fn setup_background(
             GOAL_Z_INDEX,
         );
     }
-}
-
-//spawn player entity and setup the camera
-pub fn setup_move(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    asset_server: Res<AssetServer>,
-    starting_position: Res<StartingPosition>,
-) {
-    let player_image: Handle<Image> = asset_server.load(PLAYER_TEXTURE);
-    spawn_entity(
-        Player {
-            position: starting_position.position,
-        },
-        &mut commands,
-        &mut meshes,
-        &mut materials,
-        player_image,
-        starting_position.position,
-        PLAYER_Z_INDEX,
-    );
 }

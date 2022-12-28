@@ -1,11 +1,10 @@
 use super::game_objects::{GameObjects, Position};
-use crate::resources::{Board, CurrentLevel, Goals, MapSize, StartingPosition};
+use crate::resources::{Board, CurrentLevel, Goals, MapSize};
 use bevy::prelude::*;
 use std::fs;
 
 pub fn load_starting_map(
     mut board: ResMut<Board>,
-    mut starting_position: ResMut<StartingPosition>,
     mut map_size: ResMut<MapSize>,
     current_level: Res<CurrentLevel>,
     mut goals: ResMut<Goals>,
@@ -47,9 +46,7 @@ pub fn load_starting_map(
                     board.entities.insert(Position { x, y }, GameObjects::Wall);
                 }
                 'p' => {
-                    *starting_position = StartingPosition {
-                        position: Position { x, y },
-                    }
+                    board.player_position = Position { x, y };
                 }
                 'g' => {
                     goals.goals.push(Position { x, y });

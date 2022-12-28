@@ -5,6 +5,7 @@ pub enum GameObjects {
     Box(Option<Entity>),
     Wall,
     Empty,
+    Player(Option<Entity>),
 }
 
 #[derive(Component)]
@@ -31,9 +32,7 @@ pub struct Background;
 pub struct Box;
 
 #[derive(Component)]
-pub struct Player {
-    pub position: Position,
-}
+pub struct Player;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {

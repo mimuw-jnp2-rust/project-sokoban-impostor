@@ -24,7 +24,7 @@ pub const MAP_NAMES: [&str; LEVEL_AMOUNT as usize] = [
 
 /** DIMENSIONS */
 pub const TILE_SIZE: f32 = 50.;
-pub const MOVE_DELAY: f32 = 0.15;
+pub const MOVE_ANIMATION_TIME: f32 = 0.4;
 
 /** Z_INDICES */
 pub const BOX_Z_INDEX: f32 = 2.0;
