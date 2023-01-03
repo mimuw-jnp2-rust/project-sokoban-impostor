@@ -19,7 +19,7 @@ pub fn handle_keypress(
     } else if keyboard_input.any_pressed([KeyCode::Right, KeyCode::D]) {
         Direction::Right
     } else {
-        Direction::None
+        return;
     };
     let mut position = board.get_player_position();
     let mut next_position = position.neighbour(direction);

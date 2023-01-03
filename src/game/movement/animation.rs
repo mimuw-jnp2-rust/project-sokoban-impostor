@@ -7,7 +7,7 @@ use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};
 
-use super::consts::{INTERVAL_DISTANCE_1, SPEED_1, TIME_INTERVAL_1};
+use super::{consts::{INTERVAL_DISTANCE_1, SPEED_1, TIME_INTERVAL_1}, MovableInQuery};
 
 fn animation_weight(number: f32) -> f32 {
     //this is so that the movement isn't uniform
@@ -42,14 +42,13 @@ fn modify_transform(
             transform.translation.x =
                 (starting_position.x as f32 + animation_weight(timer.0.percent())) * TILE_SIZE;
         }
-        _ => (),
     }
 }
 
 pub fn move_animation(
     time: Res<Time>,
     movement_data: Res<MovementData>,
-    mut query: Query<&mut Transform, Or<(With<Player>, With<Box>)>>,
+    mut query: Query<&mut Transform, MovableInQuery>,
     mut timer: ResMut<InputTimer>,
     mut app_state: ResMut<State<GameState>>,
     board: Res<Board>,

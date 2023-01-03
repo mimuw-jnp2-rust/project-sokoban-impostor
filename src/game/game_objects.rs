@@ -48,7 +48,6 @@ impl Position {
                 x: self.x + 1,
                 y: self.y,
             },
-            Direction::None => *self,
         }
     }
 }
@@ -59,7 +58,6 @@ pub enum Direction {
     Down,
     Left,
     Right,
-    None,
 }
 
 impl Direction {
@@ -69,7 +67,6 @@ impl Direction {
             Direction::Up => Direction::Down,
             Direction::Left => Direction::Right,
             Direction::Right => Direction::Left,
-            Direction::None => Direction::None
         }
     }
 }

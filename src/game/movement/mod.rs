@@ -5,6 +5,7 @@ use animation::{end_animation, move_animation};
 use keyboard::handle_keypress;
 
 use self::{events::MoveEvent, position_updating::handle_move};
+use crate::game::game_objects::{Box, Player};
 
 mod animation;
 mod consts;
@@ -12,6 +13,7 @@ mod events;
 mod keyboard;
 mod position_updating;
 
+pub type MovableInQuery = Or<(With<Box>, With<Player>)>;
 pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
