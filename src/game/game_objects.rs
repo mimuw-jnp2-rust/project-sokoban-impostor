@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-use crate::consts::DIRECTIONS_AMOUNT;
-
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum GameObjects {
     Box,
@@ -50,16 +48,28 @@ impl Position {
                 x: self.x + 1,
                 y: self.y,
             },
-            Direction::None => self.clone(),
+            Direction::None => *self,
         }
     }
 }
 
-#[derive(Component, Clone, Copy, PartialEq)]
+#[derive(Component, Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     Up,
     Down,
     Left,
     Right,
     None,
+}
+
+impl Direction {
+    pub fn opposite(&self) -> Direction {
+        match *self {
+            Direction::Down => Direction::Up,
+            Direction::Up => Direction::Down,
+            Direction::Left => Direction::Right,
+            Direction::Right => Direction::Left,
+            Direction::None => Direction::None
+        }
+    }
 }

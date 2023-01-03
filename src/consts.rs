@@ -37,4 +37,3 @@ pub const GOAL_Z_INDEX: f32 = 1.0;
 
 /** MISCELLANEOUS */
 pub const LEVEL_AMOUNT: usize = 9;
-pub const DIRECTIONS_AMOUNT: usize = 4;

@@ -21,22 +21,20 @@ where
     T: Component,
 {
     commands
-        .spawn((
-            SpriteBundle {
-                texture: image,
-                transform: Transform::from_xyz(
-                    position.x as f32 * TILE_SIZE,
-                    position.y as f32 * TILE_SIZE,
-                    z_index,
-                )
-                .with_scale(Vec3::new(
-                    TILE_SIZE / IMAGE_SIZE,
-                    TILE_SIZE / IMAGE_SIZE,
-                    1.,
-                )),
-                ..default()
-            },
-        ))
+        .spawn((SpriteBundle {
+            texture: image,
+            transform: Transform::from_xyz(
+                position.x as f32 * TILE_SIZE,
+                position.y as f32 * TILE_SIZE,
+                z_index,
+            )
+            .with_scale(Vec3::new(
+                TILE_SIZE / IMAGE_SIZE,
+                TILE_SIZE / IMAGE_SIZE,
+                1.,
+            )),
+            ..default()
+        },))
         .insert(component)
         .insert(GameItem)
         .insert(position)
@@ -44,11 +42,7 @@ where
 }
 
 //spawn player entity
-pub fn spawn_player(
-    mut commands: Commands,
-    images: Res<Images>,
-    mut board: ResMut<Board>,
-) {
+pub fn spawn_player(mut commands: Commands, images: Res<Images>, mut board: ResMut<Board>) {
     let position = board.get_player_position();
     let player_entity = spawn_entity(
         Player,

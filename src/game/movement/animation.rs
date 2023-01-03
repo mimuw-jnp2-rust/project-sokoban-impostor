@@ -1,6 +1,6 @@
 use crate::{
     consts::TILE_SIZE,
-    resources::{InputTimer, MovementData},
+    resources::{Board, InputTimer, MovementData},
     state::GameState,
 };
 use bevy::prelude::*;
@@ -52,23 +52,16 @@ pub fn move_animation(
     mut query: Query<&mut Transform, Or<(With<Player>, With<Box>)>>,
     mut timer: ResMut<InputTimer>,
     mut app_state: ResMut<State<GameState>>,
+    board: Res<Board>,
 ) {
     timer.0.tick(time.delta());
-    let movement_data = movement_data
-        .data
-        .as_ref()
-        .expect("Movement data not initialized when entering movement");
-    let (player_entity, player_position) = movement_data.player_data;
-    let player_transform = query
-        .get_mut(player_entity)
-        .expect("Player entity not found");
-    let direction = movement_data.direction;
-    modify_transform(player_transform, direction, &timer, player_position);
-    for (box_entity, box_position) in movement_data.boxes_data.iter() {
-        let transform = query
-            .get_mut(*box_entity)
-            .expect("Moved box entity not found");
-        modify_transform(transform, direction, &timer, *box_position);
+    let direction_opt = movement_data.direction;
+    if let Some(direction) = direction_opt {
+        for position in movement_data.moved_positions.iter() {
+            let entity = board.get_entity(position.neighbour(direction));
+            let transform = query.get_mut(entity).expect("Moved box entity not found");
+            modify_transform(transform, direction, &timer, *position);
+        }
     }
     if timer.0.finished() {
         app_state
@@ -78,6 +71,7 @@ pub fn move_animation(
 }
 
 pub fn end_animation(mut movement_data: ResMut<MovementData>, mut timer: ResMut<InputTimer>) {
-    movement_data.data = None;
+    movement_data.moved_positions.clear();
+    movement_data.direction = None;
     timer.0.reset();
 }

@@ -1,8 +1,8 @@
 use bevy::{prelude::*, utils::HashMap};
 
+use crate::consts::*;
 use crate::game::game_objects::GameObjects;
 use crate::game::game_objects::{Direction, Position};
-use crate::consts::*;
 
 #[derive(Resource)]
 pub struct InputTimer(pub Timer);
@@ -28,7 +28,10 @@ impl Board {
     }
 
     pub fn get_entity(&self, position: Position) -> Entity {
-        *self.entities.get(&position).expect("Tried searching entity of invalid position")
+        *self
+            .entities
+            .get(&position)
+            .expect("Tried searching entity of invalid position")
     }
 
     pub fn get_object_type(&self, position: Position) -> GameObjects {
@@ -52,7 +55,10 @@ impl Board {
             self.player_position = position.neighbour(dir);
         }
         self.objects.insert(position.neighbour(dir), object);
-        let entity = self.entities.remove(&position).expect("Entity not in board");
+        let entity = self
+            .entities
+            .remove(&position)
+            .expect("Entity not in board");
         self.entities.insert(position.neighbour(dir), entity);
     }
 
@@ -69,13 +75,8 @@ pub struct Goals {
 
 #[derive(Resource)]
 pub struct MovementData {
-    pub data: Option<MovementEntities>,
-}
-
-pub struct MovementEntities {
-    pub boxes_data: Vec<(Entity, Position)>,
-    pub player_data: (Entity, Position),
-    pub direction: Direction,
+    pub moved_positions: Vec<Position>,
+    pub direction: Option<Direction>,
 }
 
 #[derive(Resource)]
@@ -102,7 +103,9 @@ pub struct Images {
 
 impl FromWorld for Images {
     fn from_world(world: &mut World) -> Self {
-        let asset_server = world.get_resource::<AssetServer>().expect("Asset server not found in world");
+        let asset_server = world
+            .get_resource::<AssetServer>()
+            .expect("Asset server not found in world");
         let player_image = asset_server.load(PLAYER_TEXTURE);
         let box_image = asset_server.load(BOX_TEXTURE);
         let wall_image = asset_server.load(WALL_TEXTURE);

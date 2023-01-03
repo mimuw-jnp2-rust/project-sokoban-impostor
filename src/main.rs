@@ -11,7 +11,6 @@ mod game;
 mod menu;
 mod resources;
 mod state;
-use crate::game::game_objects::Position;
 use crate::resources::{Board, InputTimer};
 use crate::state::DisplayState;
 
@@ -30,7 +29,10 @@ fn main() {
             level_number: 1,
             level_map_str: MAP_NAMES[0],
         })
-        .insert_resource(MovementData { data: None })
+        .insert_resource(MovementData {
+            moved_positions: Vec::new(),
+            direction: None,
+        })
         .insert_resource(Goals { goals: Vec::new() })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)
