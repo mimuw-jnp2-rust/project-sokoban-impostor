@@ -1,6 +1,6 @@
 use bevy::{app::AppExit, prelude::*};
 
-use super::spawn_button::spawn_button;
+use super::spawn_button;
 use crate::{consts::MAIN_MENU_FONT, state::DisplayState};
 
 #[derive(Component)]

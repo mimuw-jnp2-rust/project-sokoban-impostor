@@ -6,13 +6,13 @@ use crate::{
     state::DisplayState,
 };
 
-use super::spawn_button::spawn_button;
+use super::spawn_button;
 #[derive(Component)]
 pub struct LevelSelectItem;
 
 #[derive(Component)]
 pub enum LevelSelectItemType {
-    Level(u32),
+    Level(usize),
     Back,
 }
 
@@ -81,7 +81,7 @@ pub fn handle_level_click(
                 LevelSelectItemType::Level(number) => {
                     *current_level = CurrentLevel {
                         level_number: *number,
-                        level_map_str: MAP_NAMES[(*number - 1) as usize],
+                        level_map_str: MAP_NAMES[*number - 1],
                     };
                     app_state
                         .push(DisplayState::Game)

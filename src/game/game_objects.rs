@@ -1,26 +1,17 @@
-use bevy::prelude::{Component, Entity};
+use bevy::prelude::*;
 
-#[derive(Eq, Hash)]
+use crate::consts::DIRECTIONS_AMOUNT;
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub enum GameObjects {
-    Box(Option<Entity>),
+    Box,
     Wall,
     Empty,
-    Player(Option<Entity>),
+    Player,
 }
 
 #[derive(Component)]
 pub struct Goal;
-
-impl PartialEq for GameObjects {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::Box(_), Self::Box(_)) => true, //we do not care about the insides of Box when comapring
-            (Self::Wall, Self::Wall) => true,
-            (Self::Empty, Self::Empty) => true,
-            _ => false,
-        }
-    }
-}
 
 #[derive(Component)]
 pub struct Wall;

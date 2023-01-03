@@ -1,13 +1,27 @@
 use bevy::prelude::*;
 
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, Goals};
+use crate::resources::{Board, Goals, Images};
 use crate::state::DisplayState;
 
-use super::game_objects::GameObjects;
+use super::game_objects::{Box, GameObjects, Position};
 
 #[derive(Component)]
 pub struct VictoryItem;
+
+pub fn handle_box_highlight(
+    goals: Res<Goals>,
+    images: Res<Images>,
+    mut query: Query<(&mut Handle<Image>, &Position), With<Box>>,
+) {
+    for (mut handle, position) in query.iter_mut() {
+        if goals.goals.contains(position) {
+            *handle = images.box_on_goal_image.clone();
+        } else {
+            *handle = images.box_image.clone();
+        }
+    }
+}
 
 pub fn handle_win(
     goals: Res<Goals>,
@@ -16,7 +30,7 @@ pub fn handle_win(
 ) {
     let mut is_win = true;
     for position in goals.goals.iter() {
-        if board.entities.get(position).unwrap_or(&GameObjects::Empty) != &GameObjects::Box(None) {
+        if board.get_object_type(*position) != GameObjects::Box {
             is_win = false;
         }
     }

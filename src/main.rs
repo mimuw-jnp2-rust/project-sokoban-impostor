@@ -1,7 +1,7 @@
-use bevy::{prelude::*, utils::HashMap};
+use bevy::prelude::*;
 use consts::{MAP_NAMES, MOVE_ANIMATION_TIME};
-use game::movement::MovementPlugin;
 use game::display::DisplayPlugin;
+use game::movement::MovementPlugin;
 use game::GamePlugin;
 use menu::MenusPlugin;
 use resources::{CurrentLevel, Goals, MapSize, MovementData};
@@ -21,10 +21,7 @@ fn main() {
             MOVE_ANIMATION_TIME,
             TimerMode::Once,
         )))
-        .insert_resource(Board {
-            entities: HashMap::new(),
-            player_position: Position { x: 0, y: 0 },
-        })
+        .insert_resource(Board::new())
         .insert_resource(MapSize {
             width: 0,
             height: 0,

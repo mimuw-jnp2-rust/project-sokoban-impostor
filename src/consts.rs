@@ -4,6 +4,7 @@ pub const TILE_TEXTURE: &str = "textures/tile.png";
 pub const WALL_TEXTURE: &str = "textures/wall.png";
 pub const BOX_TEXTURE: &str = "textures/box.png";
 pub const GOAL_TEXTURE: &str = "textures/goal.png";
+pub const BOX_ON_GOAL_TEXTURE: &str = "textures/box_on_goal.png";
 /** FONTS */
 
 pub const MAIN_MENU_FONT: &str = "fonts/square-deal.ttf";
@@ -24,7 +25,8 @@ pub const MAP_NAMES: [&str; LEVEL_AMOUNT as usize] = [
 
 /** DIMENSIONS */
 pub const TILE_SIZE: f32 = 50.;
-pub const MOVE_ANIMATION_TIME: f32 = 0.4;
+pub const IMAGE_SIZE: f32 = 16.;
+pub const MOVE_ANIMATION_TIME: f32 = 0.2;
 
 /** Z_INDICES */
 pub const BOX_Z_INDEX: f32 = 2.0;
@@ -34,4 +36,5 @@ pub const TILE_Z_INDEX: f32 = 0.0;
 pub const GOAL_Z_INDEX: f32 = 1.0;
 
 /** MISCELLANEOUS */
-pub const LEVEL_AMOUNT: u32 = 9;
+pub const LEVEL_AMOUNT: usize = 9;
+pub const DIRECTIONS_AMOUNT: usize = 4;

@@ -1,20 +1,18 @@
 use crate::{
     game::{
-        game_objects::{GameObjects, Player, Position},
+        game_objects::{Player, Position},
         GameItem,
     },
-    resources::Board,
+    resources::{Board, Images},
 };
 
 use crate::consts::*;
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy::prelude::*;
 
 //render an object with a given image and position
 pub fn spawn_entity<T>(
     component: T,
     commands: &mut Commands,
-    meshes: &mut ResMut<Assets<Mesh>>,
-    materials: &mut ResMut<Assets<ColorMaterial>>,
     image: Handle<Image>,
     position: Position,
     z_index: f32,
@@ -24,47 +22,40 @@ where
 {
     commands
         .spawn((
-            component,
-            MaterialMesh2dBundle {
-                mesh: meshes
-                    .add(Mesh::from(shape::Quad::new(Vec2 {
-                        x: TILE_SIZE,
-                        y: TILE_SIZE,
-                    })))
-                    .into(),
-                material: materials.add(image.into()),
+            SpriteBundle {
+                texture: image,
                 transform: Transform::from_xyz(
                     position.x as f32 * TILE_SIZE,
                     position.y as f32 * TILE_SIZE,
                     z_index,
-                ),
+                )
+                .with_scale(Vec3::new(
+                    TILE_SIZE / IMAGE_SIZE,
+                    TILE_SIZE / IMAGE_SIZE,
+                    1.,
+                )),
                 ..default()
             },
         ))
+        .insert(component)
         .insert(GameItem)
+        .insert(position)
         .id()
 }
 
 //spawn player entity
 pub fn spawn_player(
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    asset_server: Res<AssetServer>,
+    images: Res<Images>,
     mut board: ResMut<Board>,
 ) {
-    let player_image: Handle<Image> = asset_server.load(PLAYER_TEXTURE);
+    let position = board.get_player_position();
     let player_entity = spawn_entity(
         Player,
         &mut commands,
-        &mut meshes,
-        &mut materials,
-        player_image,
-        board.player_position,
+        images.player_image.clone(),
+        position,
         PLAYER_Z_INDEX,
     );
-    let position = board.player_position;
-    board
-        .entities
-        .insert(position, GameObjects::Player(Some(player_entity)));
+    board.insert_entity(position, player_entity);
 }

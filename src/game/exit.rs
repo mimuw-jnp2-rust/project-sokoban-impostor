@@ -13,7 +13,7 @@ pub fn exit_to_main_menu(
     query: Query<Entity, With<GameItem>>,
     mut commands: Commands,
 ) {
-    board.entities.clear();
+    board.clear();
     goals.goals.clear();
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();

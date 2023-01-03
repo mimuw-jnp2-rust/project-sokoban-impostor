@@ -5,12 +5,14 @@ use exit::{exit_to_main_menu, handle_esc};
 use maps::load_starting_map;
 use victory::{delete_win, handle_win, handle_win_click, setup_win};
 
+use self::victory::handle_box_highlight;
+
 pub mod display;
 mod exit;
 pub mod game_objects;
 mod maps;
-mod victory;
 pub mod movement;
+mod victory;
 
 #[derive(Component)]
 pub struct GameItem;
@@ -40,7 +42,8 @@ impl Plugin for GamePlugin {
         .add_system_set(
             SystemSet::on_update(DisplayState::Game)
                 .with_system(handle_esc)
-                .with_system(handle_win),
+                .with_system(handle_win)
+                .with_system(handle_box_highlight),
         );
 
         app.add_system_set(

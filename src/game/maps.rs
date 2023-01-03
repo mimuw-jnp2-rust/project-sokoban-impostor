@@ -11,7 +11,7 @@ pub fn load_starting_map(
 ) {
     let map_text = fs::read_to_string(current_level.level_map_str).expect("Did not find map file!");
     let mut lines = map_text.lines();
-    let mut split = lines.next().expect("Map file is broken").split(" ");
+    let mut split = lines.next().expect("Map file is broken").split(' ');
 
     let height = split
         .next()
@@ -38,15 +38,13 @@ pub fn load_starting_map(
             }
             match character {
                 'b' => {
-                    board
-                        .entities
-                        .insert(Position { x, y }, GameObjects::Box(None));
+                    board.insert_object(Position { x, y }, GameObjects::Box);
                 }
                 'w' => {
-                    board.entities.insert(Position { x, y }, GameObjects::Wall);
+                    board.insert_object(Position { x, y }, GameObjects::Wall);
                 }
                 'p' => {
-                    board.player_position = Position { x, y };
+                    board.insert_object(Position { x, y }, GameObjects::Player);
                 }
                 'g' => {
                     goals.goals.push(Position { x, y });
