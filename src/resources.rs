@@ -8,6 +8,9 @@ use crate::game::game_objects::{Direction, Position};
 pub struct InputTimer(pub Timer);
 
 #[derive(Resource)]
+pub struct VictoryTimer(pub Timer);
+
+#[derive(Resource)]
 pub struct Board {
     entities: HashMap<Position, Entity>,
     objects: HashMap<Position, GameObjects>,
@@ -28,6 +31,7 @@ impl Board {
     }
 
     pub fn get_entity(&self, position: Position) -> Entity {
+        println!("position in get: {:?}", position);
         *self
             .entities
             .get(&position)
@@ -50,6 +54,7 @@ impl Board {
     }
 
     pub fn move_object(&mut self, position: Position, dir: Direction) {
+        println!("position in move: {:?}", position);
         let object = self.objects.remove(&position).unwrap_or(GameObjects::Empty);
         if object == GameObjects::Player {
             self.player_position = position.neighbour(dir);

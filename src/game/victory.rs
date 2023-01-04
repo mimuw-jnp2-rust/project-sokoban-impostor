@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, Goals, Images};
+use crate::resources::{Board, Goals, Images, VictoryTimer};
 use crate::state::DisplayState;
 
 use super::game_objects::{Box, GameObjects, Position};
@@ -27,6 +27,8 @@ pub fn handle_win(
     goals: Res<Goals>,
     board: Res<Board>,
     mut app_state: ResMut<State<DisplayState>>,
+    mut timer: ResMut<VictoryTimer>,
+    time: Res<Time>,
 ) {
     let mut is_win = true;
     for position in goals.goals.iter() {
@@ -35,9 +37,14 @@ pub fn handle_win(
         }
     }
     if is_win {
+        timer.0.tick(time.delta());
+    } else {
+        timer.0.reset();
+    }
+    if timer.0.finished() {
         app_state
             .push(DisplayState::Victory)
-            .expect("Error while going to victory");
+            .expect("Could not set state to victory");
     }
 }
 

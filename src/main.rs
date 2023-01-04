@@ -4,7 +4,7 @@ use game::display::DisplayPlugin;
 use game::movement::MovementPlugin;
 use game::GamePlugin;
 use menu::MenusPlugin;
-use resources::{CurrentLevel, Goals, MapSize, MovementData};
+use resources::{CurrentLevel, Goals, MapSize, MovementData, VictoryTimer};
 use state::GameState;
 mod consts;
 mod game;
@@ -18,6 +18,10 @@ fn main() {
     App::new()
         .insert_resource(InputTimer(Timer::from_seconds(
             MOVE_ANIMATION_TIME,
+            TimerMode::Once,
+        )))
+        .insert_resource(VictoryTimer(Timer::from_seconds(
+            MOVE_ANIMATION_TIME * 2.,
             TimerMode::Once,
         )))
         .insert_resource(Board::new())

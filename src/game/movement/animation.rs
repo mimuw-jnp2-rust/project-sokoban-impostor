@@ -7,7 +7,10 @@ use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};
 
-use super::{consts::{INTERVAL_DISTANCE_1, SPEED_1, TIME_INTERVAL_1}, MovableInQuery};
+use super::{
+    consts::{INTERVAL_DISTANCE_1, SPEED_1, TIME_INTERVAL_1},
+    MovableInQuery,
+};
 
 fn animation_weight(number: f32) -> f32 {
     //this is so that the movement isn't uniform

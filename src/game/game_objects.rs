@@ -23,7 +23,7 @@ pub struct Box;
 #[derive(Component)]
 pub struct Player;
 
-#[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Component, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
