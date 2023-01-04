@@ -5,6 +5,8 @@ use render::spawn_player;
 use crate::resources::Images;
 use crate::state::DisplayState;
 
+use self::background::setup_border;
+
 // use self::background::setup_outer_walls;
 
 pub mod background;
@@ -18,12 +20,14 @@ impl Plugin for DisplayPlugin {
         app.add_system_set(
             SystemSet::on_enter(DisplayState::Game)
                 .with_system(spawn_player)
-                .with_system(setup_background), // .with_system(setup_outer_walls)
+                .with_system(setup_background)
+                .with_system(setup_border)
         )
         .add_system_set(
             SystemSet::on_resume(DisplayState::Game)
                 .with_system(spawn_player)
-                .with_system(setup_background), // .with_system(setup_outer_walls)
+                .with_system(setup_background)
+                .with_system(setup_border)
         );
     }
 }

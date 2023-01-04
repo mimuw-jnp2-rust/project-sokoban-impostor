@@ -5,7 +5,7 @@ use exit::{exit_to_main_menu, handle_esc};
 use maps::load_starting_map;
 use victory::{delete_win, handle_win, handle_win_click, setup_win};
 
-use self::victory::handle_box_highlight;
+use self::{victory::handle_box_highlight, display::background::setup_border};
 
 pub mod display;
 mod exit;
@@ -26,7 +26,8 @@ impl Plugin for GamePlugin {
                 .with_system(
                     load_starting_map
                         .before(spawn_player)
-                        .before(setup_background),
+                        .before(setup_background)
+                        .before(setup_border)
                 )
                 .with_system(set_game_state),
         )
@@ -35,7 +36,8 @@ impl Plugin for GamePlugin {
                 .with_system(
                     load_starting_map
                         .before(spawn_player)
-                        .before(setup_background),
+                        .before(setup_background)
+                        .before(setup_border)
                 )
                 .with_system(set_game_state),
         )

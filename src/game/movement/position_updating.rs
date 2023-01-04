@@ -21,8 +21,10 @@ pub fn handle_move(
         let position = event.position;
         let dir = event.direction;
         let entity = board.get_entity(position);
+
         let mut position_component = query.get_mut(entity).expect("Moved entity not found in board");
         *position_component = position.neighbour(dir);
+        
         board.move_object(position, dir);
         movement_data.moved_positions.push(position);
         movement_data.direction = Some(dir);

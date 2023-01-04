@@ -22,22 +22,22 @@ pub fn handle_keypress(
         return;
     };
     let mut position = board.get_player_position();
+    let mut positions = Vec::new();
     let mut next_position = position.neighbour(direction);
+    positions.push(position);
     //we iterate to see if there is an empty space after some boxes
     while board.get_object_type(next_position) == GameObjects::Box {
         position = next_position;
+        positions.push(position);
         next_position = next_position.neighbour(direction);
     }
+    positions.reverse();
     if board.get_object_type(next_position) == GameObjects::Empty {
-        loop {
+        for position in positions {
             writer.send(MoveEvent {
                 direction,
                 position,
             });
-            if board.get_object_type(position) == GameObjects::Player {
-                break;
-            }
-            position = position.neighbour(direction.opposite());
         }
     }
 }

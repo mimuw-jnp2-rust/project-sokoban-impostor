@@ -31,7 +31,6 @@ impl Board {
     }
 
     pub fn get_entity(&self, position: Position) -> Entity {
-        println!("position in get: {:?}", position);
         *self
             .entities
             .get(&position)
@@ -54,8 +53,7 @@ impl Board {
     }
 
     pub fn move_object(&mut self, position: Position, dir: Direction) {
-        println!("position in move: {:?}", position);
-        let object = self.objects.remove(&position).unwrap_or(GameObjects::Empty);
+        let object = self.objects.remove(&position).expect("Tried to move nothing");
         if object == GameObjects::Player {
             self.player_position = position.neighbour(dir);
         }

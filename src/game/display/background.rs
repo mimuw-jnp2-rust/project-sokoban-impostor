@@ -59,7 +59,28 @@ pub fn setup_background(
             );
         }
     }
-    //spawn horizontal border for the level and insert it to board
+    for position in goals.goals.iter() {
+        spawn_entity(
+            Goal,
+            &mut commands,
+            images.goal_image.clone(),
+            *position,
+            GOAL_Z_INDEX,
+        );
+    }
+}
+
+pub fn setup_border(
+    mut commands: Commands,
+    mut board: ResMut<Board>,
+    map_size: Res<MapSize>,
+    images: Res<Images>,
+) {
+    let bottom_border = offset_coordinate(0, map_size.height);
+    let top_border = offset_coordinate(map_size.height - 1, map_size.height);
+    let left_border = offset_coordinate(0, map_size.width);
+    let right_border = offset_coordinate(map_size.width - 1, map_size.width);
+        //spawn horizontal border for the level and insert it to board
     for y in (bottom_border - 1)..(top_border + 2) {
         spawn_entity(
             Wall,
@@ -131,15 +152,6 @@ pub fn setup_background(
                 y: bottom_border - 1,
             },
             GameObjects::Wall,
-        );
-    }
-    for position in goals.goals.iter() {
-        spawn_entity(
-            Goal,
-            &mut commands,
-            images.goal_image.clone(),
-            *position,
-            GOAL_Z_INDEX,
         );
     }
 }
