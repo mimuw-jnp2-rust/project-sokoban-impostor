@@ -31,7 +31,7 @@ pub fn handle_keypress(
         positions.push(position);
         next_position = next_position.neighbour(direction);
     }
-    positions.reverse();
+    positions.reverse(); //we want to move the last box as first, so that they don't overlap
     if board.get_object_type(next_position) == GameObjects::Empty {
         for position in positions {
             writer.send(MoveEvent {

@@ -25,21 +25,17 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::on_enter(DisplayState::Game)
-                .with_system(
-                    load_starting_map
-                        .before(Labels::Display)
-                )
+                .with_system(load_starting_map.before(Labels::Display))
                 .with_system(set_game_state),
-        )
-        .add_system_set(
+        );
+
+        app.add_system_set(
             SystemSet::on_resume(DisplayState::Game)
-                .with_system(
-                    load_starting_map
-                        .before(Labels::Display)
-                )
+                .with_system(load_starting_map.before(Labels::Display))
                 .with_system(set_game_state),
-        )
-        .add_system_set(
+        );
+
+        app.add_system_set(
             SystemSet::on_update(DisplayState::Game)
                 .with_system(handle_esc)
                 .with_system(handle_win)
@@ -50,8 +46,9 @@ impl Plugin for GamePlugin {
             SystemSet::on_exit(DisplayState::Game)
                 .with_system(exit_to_main_menu)
                 .with_system(reset_game_state),
-        )
-        .add_system_set(
+        );
+        
+        app.add_system_set(
             SystemSet::on_pause(DisplayState::Game)
                 .with_system(exit_to_main_menu)
                 .with_system(reset_game_state),

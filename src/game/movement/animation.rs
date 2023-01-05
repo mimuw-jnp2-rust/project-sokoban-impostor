@@ -13,7 +13,7 @@ use super::{
 };
 
 fn animation_weight(number: f32) -> f32 {
-    //this is so that the movement isn't uniform
+    //this is so that the movement isn't uniform; first move with SPEED_1, and then with speed such that we move an entire tile
     if number < TIME_INTERVAL_1 {
         number * SPEED_1
     } else {
