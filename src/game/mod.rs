@@ -1,11 +1,13 @@
-use crate::state::{DisplayState, GameState};
+use crate::{
+    labels::Labels,
+    state::{DisplayState, GameState},
+};
 use bevy::prelude::*;
-use display::{background::setup_background, render::spawn_player};
 use exit::{exit_to_main_menu, handle_esc};
 use maps::load_starting_map;
 use victory::{delete_win, handle_win, handle_win_click, setup_win};
 
-use self::{victory::handle_box_highlight, display::background::setup_border};
+use self::victory::handle_box_highlight;
 
 pub mod display;
 mod exit;
@@ -25,9 +27,8 @@ impl Plugin for GamePlugin {
             SystemSet::on_enter(DisplayState::Game)
                 .with_system(
                     load_starting_map
-                        .before(spawn_player)
-                        .before(setup_background)
-                        .before(setup_border)
+                        .before(Labels::Display)
+                        .before(set_game_state),
                 )
                 .with_system(set_game_state),
         )
@@ -35,9 +36,8 @@ impl Plugin for GamePlugin {
             SystemSet::on_resume(DisplayState::Game)
                 .with_system(
                     load_starting_map
-                        .before(spawn_player)
-                        .before(setup_background)
-                        .before(setup_border)
+                        .before(Labels::Display)
+                        .before(set_game_state),
                 )
                 .with_system(set_game_state),
         )

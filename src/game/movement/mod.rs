@@ -1,4 +1,4 @@
-use crate::state::GameState;
+use crate::{labels::Labels, state::GameState};
 use bevy::prelude::*;
 
 use animation::{end_animation, move_animation};
@@ -26,7 +26,8 @@ impl Plugin for MovementPlugin {
 
         app.add_system_set(
             SystemSet::on_update(GameState::Static)
-                .with_system(handle_keypress)
+                .label(Labels::Movement)
+                .with_system(handle_keypress.before(handle_move))
                 .with_system(handle_move),
         );
         app.add_event::<MoveEvent>();

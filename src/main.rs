@@ -8,6 +8,7 @@ use resources::{CurrentLevel, Goals, MapSize, MovementData, VictoryTimer};
 use state::GameState;
 mod consts;
 mod game;
+mod labels;
 mod menu;
 mod resources;
 mod state;

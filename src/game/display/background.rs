@@ -80,7 +80,7 @@ pub fn setup_border(
     let top_border = offset_coordinate(map_size.height - 1, map_size.height);
     let left_border = offset_coordinate(0, map_size.width);
     let right_border = offset_coordinate(map_size.width - 1, map_size.width);
-        //spawn horizontal border for the level and insert it to board
+    //spawn horizontal border for the level and insert it to board
     for y in (bottom_border - 1)..(top_border + 2) {
         spawn_entity(
             Wall,

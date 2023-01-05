@@ -26,7 +26,7 @@ pub fn handle_box_highlight(
 pub fn handle_win(
     goals: Res<Goals>,
     board: Res<Board>,
-    mut app_state: ResMut<State<DisplayState>>,
+    mut display_state: ResMut<State<DisplayState>>,
     mut timer: ResMut<VictoryTimer>,
     time: Res<Time>,
 ) {
@@ -38,11 +38,9 @@ pub fn handle_win(
     }
     if is_win {
         timer.0.tick(time.delta());
-    } else {
-        timer.0.reset();
     }
     if timer.0.finished() {
-        app_state
+        display_state
             .push(DisplayState::Victory)
             .expect("Could not set state to victory");
     }

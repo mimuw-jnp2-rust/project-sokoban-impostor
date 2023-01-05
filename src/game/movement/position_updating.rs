@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
 use crate::{
+    game::game_objects::*,
     resources::{Board, MovementData},
     state::GameState,
-    game::game_objects::*
 };
 
 use super::{events::MoveEvent, MovableInQuery};
@@ -22,9 +22,11 @@ pub fn handle_move(
         let dir = event.direction;
         let entity = board.get_entity(position);
 
-        let mut position_component = query.get_mut(entity).expect("Moved entity not found in board");
+        let mut position_component = query
+            .get_mut(entity)
+            .expect("Moved entity not found in board");
         *position_component = position.neighbour(dir);
-        
+
         board.move_object(position, dir);
         movement_data.moved_positions.push(position);
         movement_data.direction = Some(dir);

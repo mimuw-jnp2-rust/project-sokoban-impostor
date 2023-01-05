@@ -12,3 +12,9 @@ pub enum GameState {
     Static,
     NotInGame,
 }
+
+impl Default for GameState {
+    fn default() -> Self {
+        GameState::Static
+    }
+}

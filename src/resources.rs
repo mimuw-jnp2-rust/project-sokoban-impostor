@@ -53,7 +53,10 @@ impl Board {
     }
 
     pub fn move_object(&mut self, position: Position, dir: Direction) {
-        let object = self.objects.remove(&position).expect("Tried to move nothing");
+        let object = self
+            .objects
+            .remove(&position)
+            .expect("Tried to move nothing");
         if object == GameObjects::Player {
             self.player_position = position.neighbour(dir);
         }
