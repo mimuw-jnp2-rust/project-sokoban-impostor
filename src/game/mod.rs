@@ -28,7 +28,6 @@ impl Plugin for GamePlugin {
                 .with_system(
                     load_starting_map
                         .before(Labels::Display)
-                        .before(set_game_state),
                 )
                 .with_system(set_game_state),
         )
@@ -37,7 +36,6 @@ impl Plugin for GamePlugin {
                 .with_system(
                     load_starting_map
                         .before(Labels::Display)
-                        .before(set_game_state),
                 )
                 .with_system(set_game_state),
         )

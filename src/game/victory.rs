@@ -43,6 +43,7 @@ pub fn handle_win(
         display_state
             .push(DisplayState::Victory)
             .expect("Could not set state to victory");
+        timer.0.reset();
     }
 }
 
@@ -85,13 +86,14 @@ pub fn setup_win(mut commands: Commands, asset_server: ResMut<AssetServer>) {
 }
 
 pub fn handle_win_click(
-    keyboard_input: Res<Input<KeyCode>>,
+    mut keyboard_input: ResMut<Input<KeyCode>>,
     mut app_state: ResMut<State<DisplayState>>,
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
         app_state
             .push(DisplayState::MainMenu)
             .expect("Could not go out of victory screen");
+        keyboard_input.reset(KeyCode::Return);
     }
 }
 

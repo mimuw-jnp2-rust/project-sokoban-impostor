@@ -20,10 +20,11 @@ pub fn exit_to_main_menu(
     }
 }
 
-pub fn handle_esc(keyboard_input: Res<Input<KeyCode>>, mut app_state: ResMut<State<DisplayState>>) {
+pub fn handle_esc(mut keyboard_input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<DisplayState>>) {
     if keyboard_input.pressed(KeyCode::Escape) {
         app_state
             .push(DisplayState::MainMenu)
             .expect("Could not exit to main menu");
+        keyboard_input.reset(KeyCode::Escape);
     }
 }
