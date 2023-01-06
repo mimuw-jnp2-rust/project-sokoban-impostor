@@ -1,5 +1,9 @@
-4 10
-pwwwwwwwwg
- iiiiiiii 
- bbbbbbbb 
-          
+7 8
+p  wgwww
+ b  i  w
+w   iw w
+giiii  w
+w   iwww
+ww wbwww
+ww   www
+

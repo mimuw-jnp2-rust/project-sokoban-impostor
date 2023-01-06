@@ -1,6 +1,7 @@
-6 6
-p     
-
-g bb g
-g bb g
-
+6 9
+p       
+       
+ b www
+ b wgw
+  iiiii  
+        

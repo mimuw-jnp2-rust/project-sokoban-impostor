@@ -1,9 +1,12 @@
-12 13
- b  wb wb ww
- b  wb wb ww
- b  wb wb ww
- b  wb wp ww
- b gwb wb ww
- b gwb wb ww
- b  wb wb ww
- b  wb wb ww
+11 11
+gp         
+ b       b
+  wiiiiiw
+  wiiiiiw
+  wiiwiiw
+  wiwgiiw
+  wiiwiiw
+  wiiiiiw
+  wiiiiiw
+ b       b
+          g

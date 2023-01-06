@@ -1,7 +1,11 @@
-6 9
-p       
-       
- b www
- b wgw
-  iiiii  
-        
+10 10
+gpiwiiiiwi
+iiiiiwiiii
+iiiiwiiiii
+iiiiiwbiii
+wiiiiiiiii
+iiiiiwiiiw
+iwiiiiiwiw
+iiwiiiiiii
+iiiiwiwiii
+iiiwiiiiii

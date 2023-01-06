@@ -1,11 +1,10 @@
-10 10
-gpiwiiiiwi
-iiiiiwiiii
-iiiiwiiiii
-iiiiiwbiii
-wiiiiiiiii
-iiiiiwiiiw
-iwiiiiiwiw
-iiwiiiiiii
-iiiiwiwiii
-iiiwiiiiii
+9 9
+         
+   wbw   
+   wgw   
+ww  b    
+gw bpb  w
+ w  b w w
+     wg w
+g   ww   
+w  g     

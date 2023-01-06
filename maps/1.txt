@@ -1,16 +1,5 @@
-15 15
-               
-  b     b  b   
-     bbbbbbbbb 
-  b  w  w   b  
-           g   
-  b  w    w   g
-   b       wwww
-       biii    
-   b w    w    
-     g    p  g 
-   g    b      
- g    b   w g  
-   b           
- g     b w  g  
-               
+5 5
+p   g
+   
+ b  g
+    b

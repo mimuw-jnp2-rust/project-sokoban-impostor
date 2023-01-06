@@ -1,11 +1,8 @@
-10 10
-wwwwpwwwww
-w        w
-     w
-     w
-     g
-
-w
-
-www bwwwww
-w        w
+7 7
+wwwgwww
+wwwiwww
+wwwbwww
+gibpbig
+wwwbwww
+wwwiwww
+wwwgwww
