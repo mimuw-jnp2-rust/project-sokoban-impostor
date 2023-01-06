@@ -40,7 +40,7 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn neighbour(&self, dir: Direction) -> Position {
+    pub fn next_position(&self, dir: Direction) -> Position {
         match dir {
             Direction::Up => Position {
                 x: self.x,
@@ -56,6 +56,27 @@ impl Position {
             },
             Direction::Right => Position {
                 x: self.x + 1,
+                y: self.y,
+            },
+        }
+    }
+
+    pub fn previous_position(&self, dir: Direction) -> Position {
+        match dir {
+            Direction::Up => Position {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Direction::Down => Position {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Direction::Left => Position {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Direction::Right => Position {
+                x: self.x - 1,
                 y: self.y,
             },
         }

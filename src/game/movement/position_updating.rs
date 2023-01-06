@@ -22,10 +22,10 @@ pub fn handle_move(
             let mut position_component = query
                 .get_mut(entity)
                 .expect("Moved entity not found in board");
-            *position_component = position.neighbour(dir);
+            *position_component = position.next_position(dir);
 
             board.move_object(*position, dir);
-            movement_data.moved_positions.push(*position);
+            movement_data.moved_positions.push(position.next_position(dir));
         }
         movement_data.direction = Some(dir);
     }

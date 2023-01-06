@@ -77,14 +77,14 @@ impl Board {
             .remove(&position)
             .expect("Tried to move nothing");
         if object == GameObject::Player {
-            self.player_position = position.neighbour(dir);
+            self.player_position = position.next_position(dir);
         }
-        self.objects.insert(position.neighbour(dir), object);
+        self.objects.insert(position.next_position(dir), object);
         let entity = self
             .entities
             .remove(&position)
             .expect("Entity not in board");
-        self.entities.insert(position.neighbour(dir), entity);
+        self.entities.insert(position.next_position(dir), entity);
     }
 
     pub fn clear(&mut self) {

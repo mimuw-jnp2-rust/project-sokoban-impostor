@@ -1,3 +1,5 @@
-2 2
-p 
-gb
+4 10
+pwwwwwwwwg
+ iiiiiiii 
+ bbbbbbbb 
+          

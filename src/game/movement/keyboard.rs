@@ -25,13 +25,13 @@ pub fn handle_keypress(
     };
     let mut position = board.get_player_position();
     let mut positions = Vec::new();
-    let mut next_position = position.neighbour(direction);
+    let mut next_position = position.next_position(direction);
     positions.push(position);
     //we iterate to see if there is an empty space after some boxes
     while board.get_object_type(next_position) == GameObject::Box {
         position = next_position;
         positions.push(position);
-        next_position = next_position.neighbour(direction);
+        next_position = next_position.next_position(direction);
     }
     positions.reverse(); //we want to move the last box as first, so that they don't overlap
     let object_blocking = board.get_object_type(next_position);
