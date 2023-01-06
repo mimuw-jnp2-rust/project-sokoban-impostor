@@ -1,8 +1,8 @@
 use bevy::{prelude::*, utils::HashMap};
 
 use crate::consts::*;
-use crate::game::game_objects::GameObjects;
 use crate::game::game_objects::{Direction, Position};
+use crate::game::game_objects::{Floor, GameObject};
 
 #[derive(Resource)]
 pub struct InputTimer(pub Timer);
@@ -13,7 +13,9 @@ pub struct VictoryTimer(pub Timer);
 #[derive(Resource)]
 pub struct Board {
     entities: HashMap<Position, Entity>,
-    objects: HashMap<Position, GameObjects>,
+    objects: HashMap<Position, GameObject>,
+    floors: HashMap<Position, Floor>,
+    goals: Vec<Position>,
     player_position: Position,
 }
 
@@ -22,6 +24,8 @@ impl Board {
         Board {
             entities: HashMap::new(),
             objects: HashMap::new(),
+            floors: HashMap::new(),
+            goals: Vec::new(),
             player_position: Position { x: 0, y: 0 },
         }
     }
@@ -37,13 +41,21 @@ impl Board {
             .expect("Tried searching entity of invalid position")
     }
 
-    pub fn get_object_type(&self, position: Position) -> GameObjects {
-        *self.objects.get(&position).unwrap_or(&GameObjects::Empty)
+    pub fn get_object_type(&self, position: Position) -> GameObject {
+        *self.objects.get(&position).unwrap_or(&GameObject::Empty)
     }
 
-    pub fn insert_object(&mut self, position: Position, object: GameObjects) {
+    pub fn get_floor_type(&self, position: Position) -> Floor {
+        *self.floors.get(&position).unwrap_or(&Floor::Tile)
+    }
+
+    pub fn get_goals(&self) -> Vec<Position> {
+        self.goals.clone() //realistically, this vector won't exceed 20 entries
+    }
+
+    pub fn insert_object(&mut self, position: Position, object: GameObject) {
         self.objects.insert(position, object);
-        if object == GameObjects::Player {
+        if object == GameObject::Player {
             self.player_position = position;
         }
     }
@@ -52,12 +64,19 @@ impl Board {
         self.entities.insert(position, entity);
     }
 
+    pub fn insert_floor(&mut self, position: Position, floor: Floor) {
+        self.floors.insert(position, floor);
+        if floor == Floor::Goal {
+            self.goals.push(position);
+        }
+    }
+
     pub fn move_object(&mut self, position: Position, dir: Direction) {
         let object = self
             .objects
             .remove(&position)
             .expect("Tried to move nothing");
-        if object == GameObjects::Player {
+        if object == GameObject::Player {
             self.player_position = position.neighbour(dir);
         }
         self.objects.insert(position.neighbour(dir), object);
@@ -71,12 +90,9 @@ impl Board {
     pub fn clear(&mut self) {
         self.entities.clear();
         self.objects.clear();
+        self.floors.clear();
+        self.goals.clear();
     }
-}
-
-#[derive(Resource)]
-pub struct Goals {
-    pub goals: Vec<Position>,
 }
 
 #[derive(Resource)]
@@ -105,6 +121,7 @@ pub struct Images {
     pub box_on_goal_image: Handle<Image>,
     pub wall_image: Handle<Image>,
     pub tile_image: Handle<Image>,
+    pub ice_image: Handle<Image>,
 }
 
 impl FromWorld for Images {
@@ -118,6 +135,7 @@ impl FromWorld for Images {
         let goal_image = asset_server.load(GOAL_TEXTURE);
         let box_on_goal_image = asset_server.load(BOX_ON_GOAL_TEXTURE);
         let tile_image = asset_server.load(TILE_TEXTURE);
+        let ice_image = asset_server.load(ICE_TEXTURE);
 
         Images {
             player_image,
@@ -126,6 +144,7 @@ impl FromWorld for Images {
             goal_image,
             box_on_goal_image,
             tile_image,
+            ice_image,
         }
     }
 }

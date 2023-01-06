@@ -2,5 +2,5 @@ use crate::game::game_objects::{Direction, Position};
 
 pub struct MoveEvent {
     pub direction: Direction,
-    pub position: Position,
+    pub positions: Vec<Position>,
 }

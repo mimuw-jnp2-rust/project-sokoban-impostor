@@ -9,6 +9,7 @@ use crate::game::game_objects::{Direction, *};
 
 use super::{
     consts::{INTERVAL_DISTANCE_1, SPEED_1, TIME_INTERVAL_1},
+    events::MoveEvent,
     MovableInQuery,
 };
 
@@ -53,7 +54,6 @@ pub fn move_animation(
     movement_data: Res<MovementData>,
     mut query: Query<&mut Transform, MovableInQuery>,
     mut timer: ResMut<InputTimer>,
-    mut app_state: ResMut<State<GameState>>,
     board: Res<Board>,
 ) {
     timer.0.tick(time.delta());
@@ -65,15 +65,70 @@ pub fn move_animation(
             modify_transform(transform, direction, &timer, *position);
         }
     }
-    if timer.0.finished() {
-        app_state
-            .push(GameState::Static)
-            .expect("Could not correctly finish movement animation");
-    }
 }
 
 pub fn end_animation(mut movement_data: ResMut<MovementData>, mut timer: ResMut<InputTimer>) {
     movement_data.moved_positions.clear();
     movement_data.direction = None;
     timer.0.reset();
+}
+
+pub fn handle_ice(
+    mut movement_data: ResMut<MovementData>,
+    mut timer: ResMut<InputTimer>,
+    mut app_state: ResMut<State<GameState>>,
+    board: Res<Board>,
+    mut writer: EventWriter<MoveEvent>,
+) {
+    if timer.0.finished() {
+        let mut positions_on_ice = Vec::new();
+        let direction = movement_data
+            .direction
+            .expect("No direction after animation");
+        for position in movement_data.moved_positions.iter() {
+            let position = position.neighbour(direction);
+            if board.get_floor_type(position) == Floor::Ice {
+                let object = board.get_object_type(position.neighbour(direction));
+                match object {
+                    GameObject::Empty => positions_on_ice.push(position),
+                    GameObject::Box => {
+                        if movement_data.moved_positions.contains(&position) {     //found box is already moving
+                            positions_on_ice.push(position);
+                        }
+                        else if board.get_floor_type(position.neighbour(direction)) == Floor::Ice {
+                            let mut last_box_position = position.neighbour(direction);
+                            let mut next_object_position = last_box_position.neighbour(direction);
+                            let mut next_object = board.get_object_type(next_object_position);
+                            while next_object == GameObject::Box && board.get_floor_type(next_object_position) == Floor::Ice {
+                                last_box_position = next_object_position;
+                                next_object_position = next_object_position.neighbour(direction);
+                                next_object = board.get_object_type(next_object_position);
+                            }
+                            if next_object == GameObject::Empty {
+                                positions_on_ice.push(last_box_position);
+                            }
+                        }
+                    }
+                    _ => ()
+                }
+            }
+            else {
+                break;          //because the entity that is the farthest in direction of movement is first in movement_data,
+                                //if it stops moving, boxes before it also stop
+            }
+        }
+        if positions_on_ice.len() == 0 {
+            app_state
+                .push(GameState::Static)
+                .expect("Could not correctly finish movement animation");
+        } else {
+            movement_data.direction = None;
+            movement_data.moved_positions.clear();
+            writer.send(MoveEvent {
+                direction,
+                positions: positions_on_ice,
+            });
+            timer.0.reset();
+        }
+    }
 }

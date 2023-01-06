@@ -1,11 +1,18 @@
 use bevy::prelude::*;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
-pub enum GameObjects {
+pub enum GameObject {
     Box,
     Wall,
     Empty,
     Player,
+}
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Floor {
+    Tile,
+    Ice,
+    Goal,
 }
 
 #[derive(Component)]
@@ -22,6 +29,9 @@ pub struct Box;
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct Ice;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {

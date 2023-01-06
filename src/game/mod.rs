@@ -47,7 +47,7 @@ impl Plugin for GamePlugin {
                 .with_system(exit_to_main_menu)
                 .with_system(reset_game_state),
         );
-        
+
         app.add_system_set(
             SystemSet::on_pause(DisplayState::Game)
                 .with_system(exit_to_main_menu)

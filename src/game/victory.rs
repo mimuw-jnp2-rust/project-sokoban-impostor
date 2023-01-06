@@ -1,21 +1,21 @@
 use bevy::prelude::*;
 
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, Goals, Images, VictoryTimer};
+use crate::resources::{Board, Images, VictoryTimer};
 use crate::state::DisplayState;
 
-use super::game_objects::{Box, GameObjects, Position};
+use super::game_objects::{Box, Floor, GameObject, Position};
 
 #[derive(Component)]
 pub struct VictoryItem;
 
 pub fn handle_box_highlight(
-    goals: Res<Goals>,
+    board: Res<Board>,
     images: Res<Images>,
     mut query: Query<(&mut Handle<Image>, &Position), With<Box>>,
 ) {
     for (mut handle, position) in query.iter_mut() {
-        if goals.goals.contains(position) {
+        if board.get_floor_type(*position) == Floor::Goal {
             *handle = images.box_on_goal_image.clone();
         } else {
             *handle = images.box_image.clone();
@@ -24,20 +24,22 @@ pub fn handle_box_highlight(
 }
 
 pub fn handle_win(
-    goals: Res<Goals>,
     board: Res<Board>,
     mut display_state: ResMut<State<DisplayState>>,
     mut timer: ResMut<VictoryTimer>,
     time: Res<Time>,
 ) {
     let mut is_win = true;
-    for position in goals.goals.iter() {
-        if board.get_object_type(*position) != GameObjects::Box {
+    for position in board.get_goals().iter() {
+        if board.get_object_type(*position) != GameObject::Box {
             is_win = false;
         }
     }
     if is_win {
         timer.0.tick(time.delta());
+    }
+    else {
+        timer.0.reset();
     }
     if timer.0.finished() {
         display_state

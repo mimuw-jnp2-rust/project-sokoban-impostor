@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};
 use crate::resources::*;
+use crate::state::GameState;
 
 use super::events::MoveEvent;
 
@@ -9,6 +10,7 @@ pub fn handle_keypress(
     keyboard_input: Res<Input<KeyCode>>,
     board: Res<Board>,
     mut writer: EventWriter<MoveEvent>,
+    mut app_state: ResMut<State<GameState>>,
 ) {
     let direction = if keyboard_input.any_pressed([KeyCode::Up, KeyCode::W]) {
         Direction::Up
@@ -26,18 +28,20 @@ pub fn handle_keypress(
     let mut next_position = position.neighbour(direction);
     positions.push(position);
     //we iterate to see if there is an empty space after some boxes
-    while board.get_object_type(next_position) == GameObjects::Box {
+    while board.get_object_type(next_position) == GameObject::Box {
         position = next_position;
         positions.push(position);
         next_position = next_position.neighbour(direction);
     }
     positions.reverse(); //we want to move the last box as first, so that they don't overlap
-    if board.get_object_type(next_position) == GameObjects::Empty {
-        for position in positions {
-            writer.send(MoveEvent {
-                direction,
-                position,
-            });
-        }
+    let object_blocking = board.get_object_type(next_position);
+    if object_blocking == GameObject::Empty {
+        writer.send(MoveEvent {
+            direction,
+            positions,
+        });
+        app_state
+            .push(GameState::Moving)
+            .expect("Could not switch states");
     }
 }
