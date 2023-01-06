@@ -11,6 +11,9 @@ pub struct InputTimer(pub Timer);
 pub struct VictoryTimer(pub Timer);
 
 #[derive(Resource)]
+pub struct RestartTimer(pub Timer);
+
+#[derive(Resource)]
 pub struct Board {
     entities: HashMap<Position, Entity>,
     objects: HashMap<Position, GameObject>,

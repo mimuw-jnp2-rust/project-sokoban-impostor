@@ -1,10 +1,10 @@
 use bevy::prelude::*;
-use consts::{MAP_NAMES, MOVE_ANIMATION_TIME};
+use consts::{MAP_NAMES, MOVE_ANIMATION_TIME, RESTART_TIME};
 use game::display::DisplayPlugin;
 use game::movement::MovementPlugin;
 use game::GamePlugin;
 use menu::MenusPlugin;
-use resources::{CurrentLevel, MapSize, MovementData, VictoryTimer};
+use resources::{CurrentLevel, MapSize, MovementData, VictoryTimer, RestartTimer};
 use state::GameState;
 mod consts;
 mod game;
@@ -25,6 +25,7 @@ fn main() {
             MOVE_ANIMATION_TIME * 2.,
             TimerMode::Once,
         )))
+        .insert_resource(RestartTimer(Timer::from_seconds(RESTART_TIME, TimerMode::Once)))
         .insert_resource(Board::new())
         .insert_resource(MapSize {
             width: 0,
