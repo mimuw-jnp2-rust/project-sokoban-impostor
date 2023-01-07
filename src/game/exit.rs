@@ -1,15 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{resources::Board, state::DisplayState};
+use crate::state::DisplayState;
 
 use super::GameItem;
 
-pub fn exit_to_main_menu(
-    mut board: ResMut<Board>,
-    query: Query<Entity, With<GameItem>>,
-    mut commands: Commands,
-) {
-    board.clear();
+pub fn despawn_board(query: Query<Entity, With<GameItem>>, mut commands: Commands) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }

@@ -16,12 +16,20 @@ pub struct DisplayPlugin;
 impl Plugin for DisplayPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Images>();
-        app.add_system_set(
-            SystemSet::on_enter(DisplayState::Game)
-                .label(Labels::Display)
-                .with_system(setup_background)
-                .with_system(setup_border),
-        );
+        for map in 0..MAX_MAPS {
+            app.add_system_set(
+                SystemSet::on_enter(DisplayState::Game(map))
+                    .label(Labels::Display)
+                    .with_system(setup_background)
+                    .with_system(setup_border),
+            );
+
+            app.add_system_set(
+                SystemSet::on_resume(DisplayState::Game(map))
+                    .with_system(setup_background)
+                    .with_system(setup_border),
+            );
+        }
     }
 }
 
@@ -53,6 +61,5 @@ where
         },))
         .insert(component)
         .insert(GameItem)
-        .insert(position)
         .id()
 }

@@ -1,3 +1,4 @@
+1
 7 8
 p  wgwww
  b  i  w
@@ -6,4 +7,3 @@ giiii  w
 w   iwww
 ww wbwww
 ww   www
-

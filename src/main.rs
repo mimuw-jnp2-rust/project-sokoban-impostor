@@ -4,7 +4,7 @@ use game::display::DisplayPlugin;
 use game::movement::MovementPlugin;
 use game::GamePlugin;
 use menu::MenusPlugin;
-use resources::{CurrentLevel, MapSize, MovementData, VictoryTimer, RestartTimer};
+use resources::{CurrentLevel, MovementData, RestartTimer, VictoryTimer};
 use state::GameState;
 mod consts;
 mod game;
@@ -25,12 +25,11 @@ fn main() {
             MOVE_ANIMATION_TIME * 2.,
             TimerMode::Once,
         )))
-        .insert_resource(RestartTimer(Timer::from_seconds(RESTART_TIME, TimerMode::Once)))
+        .insert_resource(RestartTimer(Timer::from_seconds(
+            RESTART_TIME,
+            TimerMode::Once,
+        )))
         .insert_resource(Board::new())
-        .insert_resource(MapSize {
-            width: 0,
-            height: 0,
-        })
         .insert_resource(CurrentLevel {
             level_number: 1,
             level_map_str: MAP_NAMES[0],

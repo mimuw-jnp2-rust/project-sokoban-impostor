@@ -4,7 +4,9 @@ use bevy::prelude::*;
 use animation::{end_animation, move_animation};
 use keyboard::handle_keypress;
 
-use self::{animation::handle_ice, events::MoveEvent, position_updating::handle_move};
+use self::{
+    animation::handle_ice, events::MoveEvent, position_updating::handle_move, warp::handle_warp,
+};
 use crate::game::game_objects::{Box, Player};
 
 mod animation;
@@ -12,6 +14,7 @@ mod consts;
 mod events;
 mod keyboard;
 mod position_updating;
+mod warp;
 
 pub type MovableInQuery = Or<(With<Box>, With<Player>)>;
 pub struct MovementPlugin;
@@ -22,14 +25,15 @@ impl Plugin for MovementPlugin {
             SystemSet::on_update(GameState::Moving)
                 .with_system(handle_move.before(move_animation))
                 .with_system(move_animation.before(handle_ice))
-                .with_system(handle_ice)
+                .with_system(handle_ice),
         )
         .add_system_set(SystemSet::on_exit(GameState::Moving).with_system(end_animation));
 
         app.add_system_set(
             SystemSet::on_update(GameState::Static)
                 .label(Labels::Movement)
-                .with_system(handle_keypress),
+                .with_system(handle_keypress)
+                .with_system(handle_warp),
         );
         app.add_event::<MoveEvent>();
     }

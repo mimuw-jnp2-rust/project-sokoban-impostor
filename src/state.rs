@@ -1,6 +1,6 @@
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub enum DisplayState {
-    Game,
+    Game(usize),
     MainMenu,
     LevelSelect,
     Victory,

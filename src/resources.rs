@@ -13,88 +13,140 @@ pub struct VictoryTimer(pub Timer);
 #[derive(Resource)]
 pub struct RestartTimer(pub Timer);
 
-#[derive(Resource)]
-pub struct Board {
+#[derive(Copy, Clone, Debug)]
+pub struct MapSize {
+    pub height: u32,
+    pub width: u32,
+}
+
+#[derive(Debug)]
+struct SingleBoard {
     entities: HashMap<Position, Entity>,
     objects: HashMap<Position, GameObject>,
     floors: HashMap<Position, Floor>,
     goals: Vec<Position>,
+    map_size: MapSize,
     player_position: Position,
+}
+
+#[derive(Resource, Debug)]
+pub struct Board {
+    boards: Vec<SingleBoard>,
+    current: usize,
 }
 
 impl Board {
     pub fn new() -> Self {
+        let mut boards = Vec::new();
+        for _ in 0..MAX_MAPS {
+            boards.push(SingleBoard {
+                entities: HashMap::new(),
+                objects: HashMap::new(),
+                floors: HashMap::new(),
+                goals: Vec::new(),
+                map_size: MapSize {
+                    width: 0,
+                    height: 0,
+                },
+                player_position: Position { x: 0, y: 0 },
+            });
+        }
         Board {
-            entities: HashMap::new(),
-            objects: HashMap::new(),
-            floors: HashMap::new(),
-            goals: Vec::new(),
-            player_position: Position { x: 0, y: 0 },
+            current: INITIAL_MAP,
+            boards,
         }
     }
 
+    pub fn set_current_map(&mut self, current: usize) {
+        self.current = current;
+    }
+
+    pub fn set_map_size(&mut self, map_size: MapSize) {
+        self.boards[self.current].map_size = map_size;
+    }
+
+    pub fn get_map_size(&self) -> MapSize {
+        self.boards[self.current].map_size
+    }
+
     pub fn get_player_position(&self) -> Position {
-        self.player_position
+        self.boards[self.current].player_position
     }
 
     pub fn get_entity(&self, position: Position) -> Entity {
-        *self
+        *self.boards[self.current]
             .entities
             .get(&position)
             .expect("Tried searching entity of invalid position")
     }
 
     pub fn get_object_type(&self, position: Position) -> GameObject {
-        *self.objects.get(&position).unwrap_or(&GameObject::Empty)
+        *self.boards[self.current]
+            .objects
+            .get(&position)
+            .unwrap_or(&GameObject::Empty)
     }
 
     pub fn get_floor_type(&self, position: Position) -> Floor {
-        *self.floors.get(&position).unwrap_or(&Floor::Tile)
+        *self.boards[self.current]
+            .floors
+            .get(&position)
+            .unwrap_or(&Floor::Tile)
     }
 
     pub fn get_goals(&self) -> Vec<Position> {
-        self.goals.clone() //realistically, this vector won't exceed 20 entries
+        let mut goals_vec = Vec::new();
+        for map in 0..MAX_MAPS {
+            goals_vec.push(self.boards[map].goals.clone());
+        }
+        goals_vec.concat() //realistically, this vector won't exceed 20 entries
     }
 
     pub fn insert_object(&mut self, position: Position, object: GameObject) {
-        self.objects.insert(position, object);
+        self.boards[self.current].objects.insert(position, object);
         if object == GameObject::Player {
-            self.player_position = position;
+            self.boards[self.current].player_position = position;
         }
     }
 
     pub fn insert_entity(&mut self, position: Position, entity: Entity) {
-        self.entities.insert(position, entity);
+        self.boards[self.current].entities.insert(position, entity);
     }
 
     pub fn insert_floor(&mut self, position: Position, floor: Floor) {
-        self.floors.insert(position, floor);
+        self.boards[self.current].floors.insert(position, floor);
         if floor == Floor::Goal {
-            self.goals.push(position);
+            self.boards[self.current].goals.push(position);
         }
     }
 
     pub fn move_object(&mut self, position: Position, dir: Direction) {
-        let object = self
+        let object = self.boards[self.current]
             .objects
             .remove(&position)
             .expect("Tried to move nothing");
         if object == GameObject::Player {
-            self.player_position = position.next_position(dir);
+            self.boards[self.current].player_position = position.next_position(dir);
         }
-        self.objects.insert(position.next_position(dir), object);
-        let entity = self
+        self.boards[self.current]
+            .objects
+            .insert(position.next_position(dir), object);
+        let entity = self.boards[self.current]
             .entities
             .remove(&position)
             .expect("Entity not in board");
-        self.entities.insert(position.next_position(dir), entity);
+        self.boards[self.current]
+            .entities
+            .insert(position.next_position(dir), entity);
     }
 
     pub fn clear(&mut self) {
-        self.entities.clear();
-        self.objects.clear();
-        self.floors.clear();
-        self.goals.clear();
+        for map in 0..MAX_MAPS {
+            self.boards[map].entities.clear();
+            self.boards[map].objects.clear();
+            self.boards[map].floors.clear();
+            self.boards[map].goals.clear();
+        }
     }
 }
 
@@ -102,12 +154,6 @@ impl Board {
 pub struct MovementData {
     pub moved_positions: Vec<Position>,
     pub direction: Option<Direction>,
-}
-
-#[derive(Resource)]
-pub struct MapSize {
-    pub height: u32,
-    pub width: u32,
 }
 
 #[derive(Resource)]

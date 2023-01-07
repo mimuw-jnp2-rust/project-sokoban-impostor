@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub enum GameObject {
     Box,
     Wall,
@@ -8,7 +8,7 @@ pub enum GameObject {
     Player,
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub enum Floor {
     Tile,
     Ice,

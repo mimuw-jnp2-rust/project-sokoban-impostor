@@ -40,3 +40,5 @@ pub const ICE_Z_INDEX: f32 = 1.0;
 
 /** MISCELLANEOUS */
 pub const LEVEL_AMOUNT: usize = 9;
+pub const MAX_MAPS: usize = 10;
+pub const INITIAL_MAP: usize = 0;

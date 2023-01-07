@@ -62,7 +62,12 @@ pub fn move_animation(
         for position in movement_data.moved_positions.iter() {
             let entity = board.get_entity(*position);
             let transform = query.get_mut(entity).expect("Moved box entity not found");
-            modify_transform(transform, direction, &timer, position.previous_position(direction));
+            modify_transform(
+                transform,
+                direction,
+                &timer,
+                position.previous_position(direction),
+            );
         }
     }
 }
@@ -90,22 +95,27 @@ pub fn handle_ice(
     for position in movement_data.moved_positions.iter() {
         let position = *position;
         if board.get_floor_type(position) != Floor::Ice {
-            break;      //break in this loop means that this object and all that come before it stop movement
+            break; //break in this loop means that this object and all that come before it stop movement
         }
         let object = board.get_object_type(position.next_position(direction));
         match object {
             GameObject::Empty => positions_on_ice.push(position),
             GameObject::Box => {
-                if movement_data.moved_positions.contains(&position.next_position(direction)) {     //found box is already moving
+                if movement_data
+                    .moved_positions
+                    .contains(&position.next_position(direction))
+                {
+                    //found box is already moving
                     positions_on_ice.push(position);
-                }
-                else if board.get_floor_type(position.next_position(direction)) == Floor::Ice {
+                } else if board.get_floor_type(position.next_position(direction)) == Floor::Ice {
                     // if there are multiple stationary boxes ahead, either the last one moves
                     // (if it's on ice) or they remain stationary otherwise
                     let mut last_box_position = position.next_position(direction);
                     let mut next_object_position = last_box_position.next_position(direction);
                     let mut next_object = board.get_object_type(next_object_position);
-                    while next_object == GameObject::Box && board.get_floor_type(next_object_position) == Floor::Ice {
+                    while next_object == GameObject::Box
+                        && board.get_floor_type(next_object_position) == Floor::Ice
+                    {
                         last_box_position = next_object_position;
                         next_object_position = next_object_position.next_position(direction);
                         next_object = board.get_object_type(next_object_position);
@@ -115,8 +125,7 @@ pub fn handle_ice(
                     }
                     break;
                     //either way the entity that encountered a stationary entity in front of it must stop, and so do entities before it
-                }
-                else {
+                } else {
                     break;
                 }
             }

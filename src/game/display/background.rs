@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::consts::*;
 use crate::game::game_objects::*;
-use crate::resources::{Board, Images, MapSize};
+use crate::resources::{Board, Images};
 
 use super::spawn_entity;
 
@@ -11,12 +11,8 @@ fn offset_coordinate(coord: i32, max: i32) -> i32 {
 }
 
 //render the entire map based on Board
-pub fn setup_background(
-    mut commands: Commands,
-    mut board: ResMut<Board>,
-    map_size: Res<MapSize>,
-    images: Res<Images>,
-) {
+pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
+    let map_size = board.get_map_size();
     let bottom_border = offset_coordinate(0, map_size.height as i32);
     let top_border = offset_coordinate(map_size.height as i32 - 1, map_size.height as i32);
     let left_border = offset_coordinate(0, map_size.width as i32);
@@ -95,23 +91,10 @@ pub fn setup_background(
             }
         }
     }
-    // for position in goals.goals.iter() {
-    //     spawn_entity(
-    //         Goal,
-    //         &mut commands,
-    //         images.goal_image.clone(),
-    //         *position,
-    //         GOAL_Z_INDEX,
-    //     );
-    // }
 }
 
-pub fn setup_border(
-    mut commands: Commands,
-    mut board: ResMut<Board>,
-    map_size: Res<MapSize>,
-    images: Res<Images>,
-) {
+pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
+    let map_size = board.get_map_size();
     let bottom_border = offset_coordinate(-1, map_size.height as i32);
     let top_border = offset_coordinate(map_size.height as i32, map_size.height as i32);
     let left_border = offset_coordinate(-1, map_size.width as i32);

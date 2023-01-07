@@ -4,7 +4,7 @@ use crate::consts::MAIN_MENU_FONT;
 use crate::resources::{Board, Images, VictoryTimer};
 use crate::state::DisplayState;
 
-use super::game_objects::{Box, Floor, GameObject, Position};
+use super::game_objects::{Box, GameObject};
 
 #[derive(Component)]
 pub struct VictoryItem;
@@ -12,13 +12,17 @@ pub struct VictoryItem;
 pub fn handle_box_highlight(
     board: Res<Board>,
     images: Res<Images>,
-    mut query: Query<(&mut Handle<Image>, &Position), With<Box>>,
+    mut query: Query<&mut Handle<Image>, With<Box>>,
 ) {
-    for (mut handle, position) in query.iter_mut() {
-        if board.get_floor_type(*position) == Floor::Goal {
+    for mut handle in query.iter_mut() {
+        *handle = images.box_image.clone();
+    }
+    for position in board.get_goals().iter() {
+        if board.get_object_type(*position) == GameObject::Box {
+            let mut handle = query
+                .get_mut(board.get_entity(*position))
+                .expect("Entity in board is desync with query");
             *handle = images.box_on_goal_image.clone();
-        } else {
-            *handle = images.box_image.clone();
         }
     }
 }
@@ -37,8 +41,7 @@ pub fn handle_win(
     }
     if is_win {
         timer.0.tick(time.delta());
-    }
-    else {
+    } else {
         timer.0.reset();
     }
     if timer.0.finished() {
