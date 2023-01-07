@@ -56,6 +56,9 @@ pub fn load_starting_map(mut board: ResMut<Board>, current_level: Res<CurrentLev
                     'i' => {
                         board.insert_floor(Position { x, y }, Floor::Ice);
                     }
+                    char if char.is_ascii_digit() => {
+                        board.insert_floor(Position { x, y }, Floor::Warp(char.to_digit(10).unwrap() as usize));
+                    }
                     _ => (),
                 }
                 x += 1;

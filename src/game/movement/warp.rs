@@ -1,22 +1,17 @@
 use bevy::prelude::*;
 
-use crate::{resources::Board, state::CurrentMap};
+use crate::{resources::Board, state::CurrentMap, game::game_objects::Floor};
 
 pub fn handle_warp(
-    mut keyboard_input: ResMut<Input<KeyCode>>,
     mut current_map: ResMut<State<CurrentMap>>,
     mut board: ResMut<Board>,
 ) {
-    if keyboard_input.pressed(KeyCode::Key1) {
+    let floor = board.get_floor_type(board.get_player_position());
+    if let Floor::Warp(map) = floor {
+        println!("{:?}", current_map.current());
         current_map
-            .push(CurrentMap(Some(1)))
+            .push(CurrentMap(Some(map)))
             .expect("Could not switch maps state");
-        keyboard_input.reset(KeyCode::Key1);
-        board.set_current_map(1);
-    }
-    if keyboard_input.pressed(KeyCode::Key0) {
-        current_map.pop().expect("Could not revert maps state");
-        keyboard_input.reset(KeyCode::Key0);
-        board.set_current_map(0);
+        board.set_current_map(map);
     }
 }

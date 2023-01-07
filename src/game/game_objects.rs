@@ -13,6 +13,7 @@ pub enum Floor {
     Tile,
     Ice,
     Goal,
+    Warp(usize),
 }
 
 #[derive(Component)]
@@ -32,6 +33,9 @@ pub struct Player;
 
 #[derive(Component)]
 pub struct Ice;
+
+#[derive(Component)]
+pub struct Warp;
 
 #[derive(Component, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {

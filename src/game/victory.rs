@@ -17,7 +17,7 @@ pub fn handle_box_highlight(
     for mut handle in query.iter_mut() {
         *handle = images.box_image.clone();
     }
-    for position in board.get_goals().iter() {
+    for position in board.get_current_goals().iter() {
         if board.get_object_type(*position) == GameObject::Box {
             let mut handle = query
                 .get_mut(board.get_entity(*position))
@@ -34,7 +34,7 @@ pub fn handle_win(
     time: Res<Time>,
 ) {
     let mut is_win = true;
-    for position in board.get_goals().iter() {
+    for position in board.get_all_goals().iter() {
         if board.get_object_type(*position) != GameObject::Box {
             is_win = false;
         }

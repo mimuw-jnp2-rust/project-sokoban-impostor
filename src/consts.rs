@@ -6,6 +6,7 @@ pub const BOX_TEXTURE: &str = "textures/box.png";
 pub const GOAL_TEXTURE: &str = "textures/goal.png";
 pub const BOX_ON_GOAL_TEXTURE: &str = "textures/box_on_goal.png";
 pub const ICE_TEXTURE: &str = "textures/ice.png";
+pub const WARP_TEXTURE: &str = "textures/warp.png";
 /** FONTS */
 
 pub const MAIN_MENU_FONT: &str = "fonts/square-deal.ttf";
@@ -31,12 +32,8 @@ pub const MOVE_ANIMATION_TIME: f32 = 0.2;
 pub const RESTART_TIME: f32 = 0.2;
 
 /** Z_INDICES */
-pub const BOX_Z_INDEX: f32 = 2.0;
-pub const PLAYER_Z_INDEX: f32 = 2.0;
-pub const WALL_Z_INDEX: f32 = 2.0;
-pub const TILE_Z_INDEX: f32 = 0.0;
-pub const GOAL_Z_INDEX: f32 = 1.0;
-pub const ICE_Z_INDEX: f32 = 1.0;
+pub const OBJECT_Z_INDEX: f32 = 2.0;
+pub const FLOOR_Z_INDEX: f32 = 1.0;
 
 /** MISCELLANEOUS */
 pub const LEVEL_AMOUNT: usize = 9;

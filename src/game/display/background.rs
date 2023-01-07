@@ -29,7 +29,7 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.box_image.clone(),
                         Position { x, y },
-                        BOX_Z_INDEX,
+                        OBJECT_Z_INDEX,
                     );
                     board.insert_entity(Position { x, y }, entity);
                 }
@@ -39,7 +39,7 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.wall_image.clone(),
                         Position { x, y },
-                        WALL_Z_INDEX,
+                        OBJECT_Z_INDEX,
                     );
                 }
                 GameObject::Player => {
@@ -48,7 +48,7 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.player_image.clone(),
                         Position { x, y },
-                        PLAYER_Z_INDEX,
+                        OBJECT_Z_INDEX,
                     );
                     board.insert_entity(Position { x, y }, entity);
                 }
@@ -67,7 +67,7 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.ice_image.clone(),
                         position,
-                        ICE_Z_INDEX,
+                        FLOOR_Z_INDEX,
                     );
                 }
                 Floor::Tile => {
@@ -76,7 +76,7 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.tile_image.clone(),
                         position,
-                        TILE_Z_INDEX,
+                        FLOOR_Z_INDEX,
                     );
                 }
                 Floor::Goal => {
@@ -85,7 +85,16 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                         &mut commands,
                         images.goal_image.clone(),
                         position,
-                        GOAL_Z_INDEX,
+                        FLOOR_Z_INDEX,
+                    );
+                }
+                Floor::Warp(_) => {
+                    spawn_entity(
+                        Warp,
+                        &mut commands,
+                        images.warp_image.clone(),
+                        position,
+                        FLOOR_Z_INDEX,
                     );
                 }
             }
@@ -106,14 +115,14 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             &mut commands,
             images.wall_image.clone(),
             Position { x: left_border, y },
-            WALL_Z_INDEX,
+            OBJECT_Z_INDEX,
         );
         spawn_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),
             Position { x: right_border, y },
-            WALL_Z_INDEX,
+            OBJECT_Z_INDEX,
         );
         board.insert_object(Position { x: left_border, y }, GameObject::Wall);
         board.insert_object(Position { x: right_border, y }, GameObject::Wall);
@@ -125,7 +134,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             &mut commands,
             images.wall_image.clone(),
             Position { x, y: top_border },
-            WALL_Z_INDEX,
+            OBJECT_Z_INDEX,
         );
         spawn_entity(
             Wall,
@@ -135,7 +144,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
                 x,
                 y: bottom_border,
             },
-            WALL_Z_INDEX,
+            OBJECT_Z_INDEX,
         );
         board.insert_object(Position { x, y: top_border }, GameObject::Wall);
         board.insert_object(

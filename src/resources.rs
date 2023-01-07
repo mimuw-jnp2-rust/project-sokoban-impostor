@@ -94,12 +94,16 @@ impl Board {
             .unwrap_or(&Floor::Tile)
     }
 
-    pub fn get_goals(&self) -> Vec<Position> {
+    pub fn get_all_goals(&self) -> Vec<Position> {
         let mut goals_vec = Vec::new();
         for map in 0..MAX_MAPS {
             goals_vec.push(self.boards[map].goals.clone());
         }
-        goals_vec.concat() //realistically, this vector won't exceed 20 entries
+        goals_vec.concat() //realistically, this vector won't exceed 20 entries so cloning isn't a problem
+    }
+
+    pub fn get_current_goals(&self) -> Vec<Position> {
+        self.boards[self.current].goals.clone()
     }
 
     pub fn insert_object(&mut self, position: Position, object: GameObject) {
@@ -171,6 +175,7 @@ pub struct Images {
     pub wall_image: Handle<Image>,
     pub tile_image: Handle<Image>,
     pub ice_image: Handle<Image>,
+    pub warp_image: Handle<Image>,
 }
 
 impl FromWorld for Images {
@@ -185,6 +190,7 @@ impl FromWorld for Images {
         let box_on_goal_image = asset_server.load(BOX_ON_GOAL_TEXTURE);
         let tile_image = asset_server.load(TILE_TEXTURE);
         let ice_image = asset_server.load(ICE_TEXTURE);
+        let warp_image = asset_server.load(WARP_TEXTURE);
 
         Images {
             player_image,
@@ -194,6 +200,7 @@ impl FromWorld for Images {
             box_on_goal_image,
             tile_image,
             ice_image,
+            warp_image
         }
     }
 }
