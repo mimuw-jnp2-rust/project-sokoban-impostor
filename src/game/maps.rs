@@ -40,24 +40,28 @@ pub fn load_starting_map(mut board: ResMut<Board>, current_level: Res<CurrentLev
                 if y <= (height as i32 - 1) / 2 - height as i32 {
                     panic!("Map provided invalid height");
                 }
+                let position = Position { x, y, map };
                 match character {
                     'b' => {
-                        board.insert_object(Position { x, y }, GameObject::Box);
+                        board.insert_object(position, GameObject::Box);
                     }
                     'w' => {
-                        board.insert_object(Position { x, y }, GameObject::Wall);
+                        board.insert_object(position, GameObject::Wall);
                     }
                     'p' => {
-                        board.insert_object(Position { x, y }, GameObject::Player);
+                        board.insert_object(position, GameObject::Player);
                     }
                     'g' => {
-                        board.insert_floor(Position { x, y }, Floor::Goal);
+                        board.insert_floor(position, Floor::Goal);
                     }
                     'i' => {
-                        board.insert_floor(Position { x, y }, Floor::Ice);
+                        board.insert_floor(position, Floor::Ice);
                     }
                     char if char.is_ascii_digit() => {
-                        board.insert_floor(Position { x, y }, Floor::Warp(char.to_digit(10).unwrap() as usize));
+                        board.insert_floor(
+                            position,
+                            Floor::Warp(char.to_digit(10).unwrap() as usize),
+                        );
                     }
                     _ => (),
                 }

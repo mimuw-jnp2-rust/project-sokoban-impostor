@@ -26,12 +26,18 @@ pub fn handle_keypress(
     let mut position = board.get_player_position();
     let mut positions = Vec::new();
     let mut next_position = position.next_position(direction);
+    if let Floor::Warp(map) = board.get_floor_type(next_position) {
+        next_position = board.get_warp_position(map, board.get_current_map());
+    }
     positions.push(position);
     //we iterate to see if there is an empty space after some boxes
     while board.get_object_type(next_position) == GameObject::Box {
         position = next_position;
         positions.push(position);
         next_position = next_position.next_position(direction);
+        if let Floor::Warp(map) = board.get_floor_type(next_position) {
+            next_position = board.get_warp_position(map, board.get_current_map());
+        }
     }
     positions.reverse(); //we want to move the last box as first, so that they don't overlap
     let object_blocking = board.get_object_type(next_position);

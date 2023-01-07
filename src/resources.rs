@@ -27,6 +27,7 @@ struct SingleBoard {
     goals: Vec<Position>,
     map_size: MapSize,
     player_position: Position,
+    warp_positions: [Position; MAX_MAPS]
 }
 
 #[derive(Resource, Debug)]
@@ -38,7 +39,7 @@ pub struct Board {
 impl Board {
     pub fn new() -> Self {
         let mut boards = Vec::new();
-        for _ in 0..MAX_MAPS {
+        for map in 0..MAX_MAPS {
             boards.push(SingleBoard {
                 entities: HashMap::new(),
                 objects: HashMap::new(),
@@ -48,7 +49,8 @@ impl Board {
                     width: 0,
                     height: 0,
                 },
-                player_position: Position { x: 0, y: 0 },
+                player_position: Position { x: 0, y: 0, map },
+                warp_positions: [Position { x: 0, y: 0, map}; 10],
             });
         }
         Board {
@@ -74,6 +76,9 @@ impl Board {
     }
 
     pub fn get_entity(&self, position: Position) -> Entity {
+        if position.map != self.current {
+            panic!("Asking for entity from other map");
+        }
         *self.boards[self.current]
             .entities
             .get(&position)
@@ -81,14 +86,14 @@ impl Board {
     }
 
     pub fn get_object_type(&self, position: Position) -> GameObject {
-        *self.boards[self.current]
+        *self.boards[position.map]
             .objects
             .get(&position)
             .unwrap_or(&GameObject::Empty)
     }
 
     pub fn get_floor_type(&self, position: Position) -> Floor {
-        *self.boards[self.current]
+        *self.boards[position.map]
             .floors
             .get(&position)
             .unwrap_or(&Floor::Tile)
@@ -106,42 +111,60 @@ impl Board {
         self.boards[self.current].goals.clone()
     }
 
+    pub fn get_current_map(&self) -> usize {
+        self.current
+    }
+
     pub fn insert_object(&mut self, position: Position, object: GameObject) {
-        self.boards[self.current].objects.insert(position, object);
+        self.boards[position.map].objects.insert(position, object);
         if object == GameObject::Player {
-            self.boards[self.current].player_position = position;
+            self.boards[position.map].player_position = position;
         }
     }
 
     pub fn insert_entity(&mut self, position: Position, entity: Entity) {
-        self.boards[self.current].entities.insert(position, entity);
+        self.boards[position.map].entities.insert(position, entity);
     }
 
     pub fn insert_floor(&mut self, position: Position, floor: Floor) {
-        self.boards[self.current].floors.insert(position, floor);
+        self.boards[position.map].floors.insert(position, floor);
         if floor == Floor::Goal {
-            self.boards[self.current].goals.push(position);
+            self.boards[position.map].goals.push(position);
+        }
+        if let Floor::Warp(map) = floor {
+            self.boards[position.map].warp_positions[map] = position;
         }
     }
 
     pub fn move_object(&mut self, position: Position, dir: Direction) {
-        let object = self.boards[self.current]
+        let object = self.boards[position.map]
             .objects
             .remove(&position)
             .expect("Tried to move nothing");
         if object == GameObject::Player {
-            self.boards[self.current].player_position = position.next_position(dir);
+            self.boards[position.map].player_position = position.next_position(dir);
         }
-        self.boards[self.current]
+        self.boards[position.map]
             .objects
             .insert(position.next_position(dir), object);
-        let entity = self.boards[self.current]
-            .entities
-            .remove(&position)
-            .expect("Entity not in board");
-        self.boards[self.current]
-            .entities
-            .insert(position.next_position(dir), entity);
+        if position.map == self.current {
+            let entity = self.boards[position.map]
+                .entities
+                .remove(&position)
+                .expect("Entity not in board");
+            self.boards[position.map]
+                .entities
+                .insert(position.next_position(dir), entity);
+        }
+    }
+
+    pub fn delete_object(&mut self, position: Position) -> Entity {
+        self.boards[position.map].objects.remove(&position).expect("Could not remove object");
+        self.boards[position.map].entities.remove(&position).expect("Could not remove entity")
+    }
+
+    pub fn get_warp_position(&self, from: usize, to: usize) -> Position {
+        self.boards[from].warp_positions[to]
     }
 
     pub fn clear(&mut self) {
@@ -200,7 +223,7 @@ impl FromWorld for Images {
             box_on_goal_image,
             tile_image,
             ice_image,
-            warp_image
+            warp_image,
         }
     }
 }

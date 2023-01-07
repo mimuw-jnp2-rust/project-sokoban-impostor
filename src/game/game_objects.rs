@@ -41,6 +41,7 @@ pub struct Warp;
 pub struct Position {
     pub x: i32,
     pub y: i32,
+    pub map: usize,
 }
 
 impl Position {
@@ -49,18 +50,22 @@ impl Position {
             Direction::Up => Position {
                 x: self.x,
                 y: self.y + 1,
+                map: self.map,
             },
             Direction::Down => Position {
                 x: self.x,
                 y: self.y - 1,
+                map: self.map,
             },
             Direction::Left => Position {
                 x: self.x - 1,
                 y: self.y,
+                map: self.map,
             },
             Direction::Right => Position {
                 x: self.x + 1,
                 y: self.y,
+                map: self.map,
             },
         }
     }
@@ -70,18 +75,22 @@ impl Position {
             Direction::Up => Position {
                 x: self.x,
                 y: self.y - 1,
+                map: self.map,
             },
             Direction::Down => Position {
                 x: self.x,
                 y: self.y + 1,
+                map: self.map,
             },
             Direction::Left => Position {
                 x: self.x + 1,
                 y: self.y,
+                map: self.map,
             },
             Direction::Right => Position {
                 x: self.x - 1,
                 y: self.y,
+                map: self.map,
             },
         }
     }
