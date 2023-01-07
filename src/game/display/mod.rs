@@ -5,7 +5,7 @@ use crate::consts::*;
 use crate::game::{game_objects::Position, GameItem};
 use crate::labels::Labels;
 use crate::resources::Images;
-use crate::state::DisplayState;
+use crate::state::CurrentMap;
 
 use self::background::setup_border;
 
@@ -18,16 +18,24 @@ impl Plugin for DisplayPlugin {
         app.init_resource::<Images>();
         for map in 0..MAX_MAPS {
             app.add_system_set(
-                SystemSet::on_enter(DisplayState::Game(map))
+                SystemSet::on_enter(CurrentMap(Some(map)))
                     .label(Labels::Display)
                     .with_system(setup_background)
                     .with_system(setup_border),
             );
 
             app.add_system_set(
-                SystemSet::on_resume(DisplayState::Game(map))
+                SystemSet::on_resume(CurrentMap(Some(map)))
                     .with_system(setup_background)
                     .with_system(setup_border),
+            );
+
+            app.add_system_set(
+                SystemSet::on_exit(CurrentMap(Some(map))).with_system(despawn_board),
+            );
+
+            app.add_system_set(
+                SystemSet::on_pause(CurrentMap(Some(map))).with_system(despawn_board),
             );
         }
     }
@@ -62,4 +70,10 @@ where
         .insert(component)
         .insert(GameItem)
         .id()
+}
+
+pub fn despawn_board(query: Query<Entity, With<GameItem>>, mut commands: Commands) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }

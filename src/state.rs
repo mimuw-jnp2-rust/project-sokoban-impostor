@@ -1,6 +1,6 @@
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
 pub enum DisplayState {
-    Game(usize),
+    Game,
     MainMenu,
     LevelSelect,
     Victory,
@@ -8,14 +8,19 @@ pub enum DisplayState {
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]
-pub enum GameState {
+pub struct GameState(pub Option<Move>);
+
+#[derive(Clone, PartialEq, Eq, Debug, Hash)]
+pub enum Move {
     Moving,
     Static,
-    NotInGame,
 }
 
 impl Default for GameState {
     fn default() -> Self {
-        GameState::Static
+        GameState(Some(Move::Static))
     }
 }
+
+#[derive(Clone, PartialEq, Eq, Debug, Hash)]
+pub struct CurrentMap(pub Option<usize>);

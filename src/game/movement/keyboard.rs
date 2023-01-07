@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};
 use crate::resources::*;
-use crate::state::GameState;
+use crate::state::{GameState, Move};
 
 use super::events::MoveEvent;
 
@@ -41,7 +41,7 @@ pub fn handle_keypress(
             positions,
         });
         app_state
-            .set(GameState::Moving)
+            .set(GameState(Some(Move::Moving)))
             .expect("Could not switch states");
     }
 }

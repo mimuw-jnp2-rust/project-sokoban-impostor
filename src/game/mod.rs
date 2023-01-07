@@ -1,12 +1,10 @@
 use crate::{
-    consts::{INITIAL_MAP, MAX_MAPS},
     labels::Labels,
-    menu::reset_game_state,
-    resources::RestartTimer,
-    state::{DisplayState, GameState},
+    resources::{RestartTimer, Board},
+    state::{DisplayState, GameState, CurrentMap, Move}, consts::INITIAL_MAP,
 };
 use bevy::prelude::*;
-use exit::{despawn_board, handle_esc};
+use exit::handle_esc;
 use maps::load_starting_map;
 use victory::{delete_win, handle_box_highlight, handle_win, handle_win_click, setup_win};
 
@@ -25,62 +23,63 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_enter(DisplayState::Game(INITIAL_MAP)).with_system(set_game_state),
+            SystemSet::on_enter(DisplayState::Game)
+                .with_system(load_starting_map.before(Labels::Display))
+                .with_system(set_game_state)
         );
         app.add_system_set(
-            SystemSet::on_enter(DisplayState::Game(INITIAL_MAP))
-                .with_system(load_starting_map.before(Labels::Display)),
+            SystemSet::on_update(DisplayState::Game)
+                .with_system(handle_esc)
+                .with_system(handle_win)
+                .with_system(handle_restart)
+                .with_system(handle_box_highlight.before(Labels::Movement)),
         );
-        for map in 0..MAX_MAPS {
-            app.add_system_set(
-                SystemSet::on_update(DisplayState::Game(map))
-                    .with_system(handle_esc)
-                    .with_system(handle_win)
-                    .with_system(handle_restart)
-                    .with_system(handle_box_highlight),
-            );
 
-            app.add_system_set(
-                SystemSet::on_exit(DisplayState::Game(map))
-                    .label(Labels::ExitGame)
-                    .with_system(despawn_board),
-            );
-
-            app.add_system_set(
-                SystemSet::on_pause(DisplayState::Game(map)).with_system(despawn_board),
-            );
-        }
+        app.add_system_set(
+            SystemSet::on_exit(DisplayState::Game)
+                .label(Labels::ExitGame)
+                .with_system(reset_game_state)
+                .with_system(clear_board)
+        );
 
         app.add_system_set(
             SystemSet::on_enter(DisplayState::Victory)
                 .with_system(setup_win)
-                .with_system(reset_game_state),
         )
         .add_system_set(SystemSet::on_update(DisplayState::Victory).with_system(handle_win_click))
         .add_system_set(SystemSet::on_exit(DisplayState::Victory).with_system(delete_win));
 
         app.add_system_set(
             SystemSet::on_update(DisplayState::Restarting)
-                .with_system(reload.after(Labels::ExitGame)),
+                .with_system(reload.after(Labels::ExitGame))
         );
     }
 }
 
-fn set_game_state(mut game_state: ResMut<State<GameState>>) {
-    if game_state.current() != &GameState::Static {
+fn set_game_state(mut game_state: ResMut<State<GameState>>, mut current_map: ResMut<State<CurrentMap>>) {
+    if game_state.current() != &GameState(Some(Move::Static)) {
         game_state
-            .set(GameState::Static)
+            .set(GameState(Some(Move::Static)))
             .expect("Could not set static game state");
+    }
+    if current_map.current() != &CurrentMap(Some(INITIAL_MAP)) {
+        current_map
+            .set(CurrentMap(Some(INITIAL_MAP)))
+            .expect("Could not set initial map");
     }
 }
 
 fn handle_restart(
     mut keyboard_input: ResMut<Input<KeyCode>>,
     mut display_state: ResMut<State<DisplayState>>,
+    mut current_map: ResMut<State<CurrentMap>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::R) {
         display_state
             .set(DisplayState::Restarting)
+            .expect("Could not restart");
+        current_map
+            .set(CurrentMap(None))
             .expect("Could not restart");
         keyboard_input.reset(KeyCode::R);
     }
@@ -88,6 +87,7 @@ fn handle_restart(
 
 fn reload(
     mut display_state: ResMut<State<DisplayState>>,
+    mut current_map: ResMut<State<CurrentMap>>,
     mut timer: ResMut<RestartTimer>,
     time: Res<Time>,
 ) {
@@ -95,7 +95,27 @@ fn reload(
     if timer.0.finished() {
         timer.0.reset();
         display_state
-            .set(DisplayState::Game(INITIAL_MAP))
+            .set(DisplayState::Game)
             .expect("Could not reload game");
+        current_map
+            .set(CurrentMap(Some(INITIAL_MAP)))
+        .expect("Could not reload game");
     }
+}
+
+pub fn reset_game_state(mut game_state: ResMut<State<GameState>>, mut current_map: ResMut<State<CurrentMap>>) {
+    if game_state.current() != &GameState(None) {
+        game_state
+            .overwrite_set(GameState(None))
+            .expect("Could not reset game state");
+    }
+    if current_map.current() != &CurrentMap(None) {
+        current_map
+            .overwrite_set(CurrentMap(None))
+            .expect("Could not reset game state");
+    }
+}
+
+pub fn clear_board(mut board: ResMut<Board>) {
+    board.clear();
 }

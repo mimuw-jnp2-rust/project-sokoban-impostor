@@ -1,19 +1,17 @@
 use bevy::prelude::*;
-use consts::{MAP_NAMES, MOVE_ANIMATION_TIME, RESTART_TIME};
+use consts::*;
 use game::display::DisplayPlugin;
 use game::movement::MovementPlugin;
 use game::GamePlugin;
 use menu::MenusPlugin;
-use resources::{CurrentLevel, MovementData, RestartTimer, VictoryTimer};
-use state::GameState;
+use resources::*;
+use state::{CurrentMap, DisplayState, GameState};
 mod consts;
 mod game;
 mod labels;
 mod menu;
 mod resources;
 mod state;
-use crate::resources::{Board, InputTimer};
-use crate::state::DisplayState;
 
 fn main() {
     App::new()
@@ -44,7 +42,8 @@ fn main() {
         .add_plugin(DisplayPlugin)
         .add_plugin(MovementPlugin)
         .add_state(DisplayState::MainMenu)
-        .add_state(GameState::NotInGame)
+        .add_state(GameState(None))
+        .add_state(CurrentMap(None))
         .add_startup_system(spawn_camera)
         .run();
 }

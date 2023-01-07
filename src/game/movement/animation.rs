@@ -1,7 +1,7 @@
 use crate::{
     consts::TILE_SIZE,
     resources::{Board, InputTimer, MovementData},
-    state::GameState,
+    state::{GameState, Move},
 };
 use bevy::prelude::*;
 
@@ -134,7 +134,7 @@ pub fn handle_ice(
     }
     if positions_on_ice.is_empty() {
         app_state
-            .set(GameState::Static)
+            .set(GameState(Some(Move::Static)))
             .expect("Could not correctly finish movement animation");
     } else {
         movement_data.direction = None;

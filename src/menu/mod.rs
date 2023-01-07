@@ -2,10 +2,7 @@ use bevy::prelude::*;
 
 mod level_select;
 mod main_menu;
-use crate::{
-    resources::Board,
-    state::{DisplayState, GameState},
-};
+use crate::state::DisplayState;
 
 use level_select::{delete_level_select, handle_level_click, setup_level_select};
 use main_menu::{delete_main_menu, handle_menu_click, setup_main_menu};
@@ -15,10 +12,7 @@ pub struct MenusPlugin;
 impl Plugin for MenusPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_enter(DisplayState::MainMenu)
-                .with_system(setup_main_menu)
-                .with_system(reset_game_state)
-                .with_system(clear_board),
+            SystemSet::on_enter(DisplayState::MainMenu).with_system(setup_main_menu),
         )
         .add_system_set(SystemSet::on_update(DisplayState::MainMenu).with_system(handle_menu_click))
         .add_system_set(SystemSet::on_exit(DisplayState::MainMenu).with_system(delete_main_menu));
@@ -70,16 +64,4 @@ where
                 }),
             );
         });
-}
-
-pub fn reset_game_state(mut game_state: ResMut<State<GameState>>) {
-    if game_state.current() != &GameState::NotInGame {
-        game_state
-            .overwrite_set(GameState::NotInGame)
-            .expect("Could not reset game state");
-    }
-}
-
-pub fn clear_board(mut board: ResMut<Board>) {
-    board.clear();
 }

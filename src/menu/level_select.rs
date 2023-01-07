@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    consts::{INITIAL_MAP, LEVEL_AMOUNT, MAIN_MENU_FONT, MAP_NAMES},
+    consts::{LEVEL_AMOUNT, MAIN_MENU_FONT, MAP_NAMES},
     resources::CurrentLevel,
     state::DisplayState,
 };
@@ -84,7 +84,7 @@ pub fn handle_level_click(
                         level_map_str: MAP_NAMES[*number - 1],
                     };
                     app_state
-                        .set(DisplayState::Game(INITIAL_MAP))
+                        .set(DisplayState::Game)
                         .expect("Failed to load game");
                 }
                 LevelSelectItemType::Back => {

@@ -1,4 +1,7 @@
-use crate::{labels::Labels, state::GameState};
+use crate::{
+    labels::Labels,
+    state::{GameState, Move},
+};
 use bevy::prelude::*;
 
 use animation::{end_animation, move_animation};
@@ -22,15 +25,17 @@ pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
-            SystemSet::on_update(GameState::Moving)
+            SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
                 .with_system(move_animation.before(handle_ice))
                 .with_system(handle_ice),
         )
-        .add_system_set(SystemSet::on_exit(GameState::Moving).with_system(end_animation));
+        .add_system_set(
+            SystemSet::on_exit(GameState(Some(Move::Moving))).with_system(end_animation),
+        );
 
         app.add_system_set(
-            SystemSet::on_update(GameState::Static)
+            SystemSet::on_update(GameState(Some(Move::Static)))
                 .label(Labels::Movement)
                 .with_system(handle_keypress)
                 .with_system(handle_warp),
