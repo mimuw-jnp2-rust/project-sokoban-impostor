@@ -41,7 +41,7 @@ pub fn handle_keypress(
             positions,
         });
         app_state
-            .push(GameState::Moving)
+            .set(GameState::Moving)
             .expect("Could not switch states");
     }
 }

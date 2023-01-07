@@ -30,12 +30,6 @@ impl Plugin for GamePlugin {
         );
 
         app.add_system_set(
-            SystemSet::on_resume(DisplayState::Game)
-                .with_system(load_starting_map.before(Labels::Display))
-                .with_system(set_game_state),
-        );
-
-        app.add_system_set(
             SystemSet::on_update(DisplayState::Game)
                 .with_system(handle_esc)
                 .with_system(handle_win)
@@ -50,19 +44,10 @@ impl Plugin for GamePlugin {
                 .with_system(reset_game_state.before(set_game_state)),
         );
 
-        app.add_system_set(
-            SystemSet::on_pause(DisplayState::Game)
-                .label(Labels::ExitGame)
-                .with_system(exit_to_main_menu)
-                .with_system(reset_game_state.before(set_game_state)),
-        );
-
         app.add_system_set(SystemSet::on_enter(DisplayState::Victory).with_system(setup_win))
-            .add_system_set(SystemSet::on_resume(DisplayState::Victory).with_system(setup_win))
             .add_system_set(
                 SystemSet::on_update(DisplayState::Victory).with_system(handle_win_click),
             )
-            .add_system_set(SystemSet::on_pause(DisplayState::Victory).with_system(delete_win))
             .add_system_set(SystemSet::on_exit(DisplayState::Victory).with_system(delete_win));
         
         app.add_system_set(SystemSet::on_update(DisplayState::Restarting).with_system(reload.after(Labels::ExitGame)));
@@ -71,27 +56,27 @@ impl Plugin for GamePlugin {
 
 fn set_game_state(mut game_state: ResMut<State<GameState>>) {
     game_state
-        .overwrite_set(GameState::Static)
+        .set(GameState::Static)
         .expect("Could not set static game state");
 }
 
 fn reset_game_state(mut game_state: ResMut<State<GameState>>) {
     game_state
-        .overwrite_set(GameState::NotInGame)
+        .set(GameState::NotInGame)
         .expect("Could not reset game state");
 }
 
 fn handle_restart(mut keyboard_input: ResMut<Input<KeyCode>>, mut display_state: ResMut<State<DisplayState>>) {
     if keyboard_input.just_pressed(KeyCode::R) {
-        display_state.push(DisplayState::Restarting).expect("Could not restart");
+        display_state.set(DisplayState::Restarting).expect("Could not restart");
         keyboard_input.reset(KeyCode::R);
     }
 }
 
 fn reload(mut display_state: ResMut<State<DisplayState>>, mut timer: ResMut<RestartTimer>, time: Res<Time>) {
-    timer.0.tick(time.delta());         //workaround to avoid bugs relatedS to switching states in ::on_enter or ::on_exit
+    timer.0.tick(time.delta());         //workaround to avoid bugs related to switching states in ::on_enter or ::on_exit
     if timer.0.finished() {
         timer.0.reset();
-        display_state.push(DisplayState::Game).expect("Could not reload game");
+        display_state.set(DisplayState::Game).expect("Could not reload game");
     }
 }

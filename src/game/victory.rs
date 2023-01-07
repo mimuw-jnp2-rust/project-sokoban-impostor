@@ -43,7 +43,7 @@ pub fn handle_win(
     }
     if timer.0.finished() {
         display_state
-            .push(DisplayState::Victory)
+            .set(DisplayState::Victory)
             .expect("Could not set state to victory");
         timer.0.reset();
     }
@@ -93,7 +93,7 @@ pub fn handle_win_click(
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
         app_state
-            .push(DisplayState::MainMenu)
+            .set(DisplayState::MainMenu)
             .expect("Could not go out of victory screen");
         keyboard_input.reset(KeyCode::Return);
     }

@@ -21,12 +21,6 @@ impl Plugin for DisplayPlugin {
                 .label(Labels::Display)
                 .with_system(setup_background)
                 .with_system(setup_border),
-        )
-        .add_system_set(
-            SystemSet::on_resume(DisplayState::Game)
-                .label(Labels::Display)
-                .with_system(setup_background)
-                .with_system(setup_border),
         );
     }
 }

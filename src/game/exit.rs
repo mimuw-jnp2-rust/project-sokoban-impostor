@@ -21,7 +21,7 @@ pub fn handle_esc(
 ) {
     if keyboard_input.pressed(KeyCode::Escape) {
         app_state
-            .push(DisplayState::MainMenu)
+            .set(DisplayState::MainMenu)
             .expect("Could not exit to main menu");
         keyboard_input.reset(KeyCode::Escape);
     }

@@ -125,7 +125,7 @@ pub fn handle_ice(
     }
     if positions_on_ice.is_empty() {
         app_state
-            .push(GameState::Static)
+            .set(GameState::Static)
             .expect("Could not correctly finish movement animation");
     } else {
         movement_data.direction = None;

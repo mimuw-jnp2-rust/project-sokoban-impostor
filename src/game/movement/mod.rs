@@ -24,8 +24,7 @@ impl Plugin for MovementPlugin {
                 .with_system(move_animation.before(handle_ice))
                 .with_system(handle_ice)
         )
-        .add_system_set(SystemSet::on_exit(GameState::Moving).with_system(end_animation))
-        .add_system_set(SystemSet::on_pause(GameState::Moving).with_system(end_animation));
+        .add_system_set(SystemSet::on_exit(GameState::Moving).with_system(end_animation));
 
         app.add_system_set(
             SystemSet::on_update(GameState::Static)
