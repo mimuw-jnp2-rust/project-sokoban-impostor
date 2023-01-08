@@ -177,10 +177,11 @@ impl Board {
     }
 }
 
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct MovementData {
     pub moved_positions: Vec<Position>,
     pub direction: Option<Direction>,
+    pub positions_on_ice: Option<Vec<Position>>
 }
 
 #[derive(Resource)]

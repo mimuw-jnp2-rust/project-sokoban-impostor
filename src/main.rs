@@ -35,6 +35,7 @@ fn main() {
         .insert_resource(MovementData {
             moved_positions: Vec::new(),
             direction: None,
+            positions_on_ice: None,
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)

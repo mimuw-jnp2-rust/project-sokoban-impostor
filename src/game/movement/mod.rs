@@ -1,6 +1,6 @@
 use crate::{
     labels::Labels,
-    state::{GameState, Move},
+    state::{GameState, Move}, resources::{MovementData, InputTimer},
 };
 use bevy::prelude::*;
 
@@ -29,9 +29,10 @@ impl Plugin for MovementPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
-                .with_system(move_animation.before(handle_warp))
-                .with_system(handle_warp.before(handle_ice))
-                .with_system(handle_ice)
+                .with_system(move_animation.before(handle_ice))
+                .with_system(handle_ice.before(handle_warp))
+                .with_system(handle_warp.before(continue_animation))
+                .with_system(continue_animation)
         )
         .add_system_set(
             SystemSet::on_exit(GameState(Some(Move::Moving))).with_system(end_animation),
@@ -43,5 +44,26 @@ impl Plugin for MovementPlugin {
                 .with_system(handle_keypress),
         );
         app.add_event::<MoveEvent>();
+    }
+}
+
+fn continue_animation(mut movement_data: ResMut<MovementData>, mut app_state: ResMut<State<GameState>>, mut writer: EventWriter<MoveEvent>, mut timer: ResMut<InputTimer>) {
+    if !timer.0.finished() {
+        return;
+    }
+    let positions = movement_data.positions_on_ice.clone().expect("Positions on ice doesn't exist in continue animation");
+    if !positions.is_empty() {
+        writer.send(MoveEvent {
+            direction: movement_data.direction.expect("Movement missing direction"),
+            positions,           //this vector has less than 20 entries
+        });
+        movement_data.direction = None;
+        movement_data.moved_positions.clear();
+        movement_data.positions_on_ice = None;
+        timer.0.reset();
+    } else {
+        app_state
+            .set(GameState(Some(Move::Static)))
+            .expect("Could not correctly finish movement animation");
     }
 }
