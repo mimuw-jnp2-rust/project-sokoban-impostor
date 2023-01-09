@@ -23,10 +23,6 @@ fn main() {
             MOVE_ANIMATION_TIME * 2.,
             TimerMode::Once,
         )))
-        .insert_resource(RestartTimer(Timer::from_seconds(
-            RESTART_TIME,
-            TimerMode::Once,
-        )))
         .insert_resource(Board::new())
         .insert_resource(CurrentLevel {
             level_number: 1,
@@ -36,6 +32,9 @@ fn main() {
             moved_positions: Vec::new(),
             direction: None,
             positions_on_ice: None,
+        })
+        .insert_resource(BoardStates {
+            boards: Vec::new(),
         })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)

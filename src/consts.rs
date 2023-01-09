@@ -29,7 +29,6 @@ pub const MAP_NAMES: [&str; LEVEL_AMOUNT as usize] = [
 pub const TILE_SIZE: f32 = 50.;
 pub const IMAGE_SIZE: f32 = 16.;
 pub const MOVE_ANIMATION_TIME: f32 = 0.2;
-pub const RESTART_TIME: f32 = 0.2;
 
 /** Z_INDICES */
 pub const OBJECT_Z_INDEX: f32 = 2.0;

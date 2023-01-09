@@ -1,31 +1,13 @@
 use bevy::prelude::*;
 
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, Images, VictoryTimer};
+use crate::resources::{Board, VictoryTimer};
 use crate::state::DisplayState;
 
-use super::game_objects::{Box, GameObject};
+use super::game_objects::GameObject;
 
 #[derive(Component)]
 pub struct VictoryItem;
-
-pub fn handle_box_highlight(
-    board: Res<Board>,
-    images: Res<Images>,
-    mut query: Query<&mut Handle<Image>, With<Box>>,
-) {
-    for mut handle in query.iter_mut() {
-        *handle = images.box_image.clone();
-    }
-    for position in board.get_current_goals().iter() {
-        if board.get_object_type(*position) == GameObject::Box {
-            let mut handle = query
-                .get_mut(board.get_entity(*position))
-                .expect("Entity in board is desync with query");
-            *handle = images.box_on_goal_image.clone();
-        }
-    }
-}
 
 pub fn handle_win(
     board: Res<Board>,

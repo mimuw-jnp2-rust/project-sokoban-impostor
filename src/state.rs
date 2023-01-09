@@ -4,7 +4,6 @@ pub enum DisplayState {
     MainMenu,
     LevelSelect,
     Victory,
-    Restarting,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash)]

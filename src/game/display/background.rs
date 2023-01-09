@@ -25,10 +25,17 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
             let game_object = board.get_object_type(position);
             match game_object {
                 GameObject::Box => {
+                    let image;
+                    if board.get_floor_type(position) == Floor::Goal {
+                        image = images.box_on_goal_image.clone();
+                    }
+                    else {
+                        image = images.box_image.clone();
+                    }
                     let entity = spawn_entity(
                         Box,
                         &mut commands,
-                        images.box_image.clone(),
+                        image,
                         position,
                         OBJECT_Z_INDEX,
                     );

@@ -5,7 +5,7 @@ use crate::consts::*;
 use crate::game::{game_objects::Position, GameItem};
 use crate::labels::Labels;
 use crate::resources::Images;
-use crate::state::CurrentMap;
+use crate::state::{Move, GameState};
 
 use self::background::setup_border;
 
@@ -16,28 +16,13 @@ pub struct DisplayPlugin;
 impl Plugin for DisplayPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Images>();
-        for map in 0..MAX_MAPS {
-            app.add_system_set(
-                SystemSet::on_enter(CurrentMap(Some(map)))
-                    .label(Labels::Display)
-                    .with_system(setup_background)
-                    .with_system(setup_border),
-            );
 
-            app.add_system_set(
-                SystemSet::on_resume(CurrentMap(Some(map)))
-                    .with_system(setup_background)
-                    .with_system(setup_border),
-            );
-
-            app.add_system_set(
-                SystemSet::on_exit(CurrentMap(Some(map))).with_system(despawn_board),
-            );
-
-            app.add_system_set(
-                SystemSet::on_pause(CurrentMap(Some(map))).with_system(despawn_board),
-            );
-        }
+        app.add_system_set(SystemSet::on_update(GameState(Some(Move::Static)))
+            .label(Labels::Display)
+            .with_system(despawn_board.before(setup_background).before(setup_border))
+            .with_system(setup_background)
+            .with_system(setup_border)
+        );
     }
 }
 

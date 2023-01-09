@@ -10,16 +10,13 @@ pub struct InputTimer(pub Timer);
 #[derive(Resource)]
 pub struct VictoryTimer(pub Timer);
 
-#[derive(Resource)]
-pub struct RestartTimer(pub Timer);
-
 #[derive(Copy, Clone, Debug)]
 pub struct MapSize {
     pub height: u32,
     pub width: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct SingleBoard {
     entities: HashMap<Position, Entity>,
     objects: HashMap<Position, GameObject>,
@@ -30,7 +27,7 @@ struct SingleBoard {
     warp_positions: [Position; MAX_MAPS]
 }
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Clone)]
 pub struct Board {
     boards: Vec<SingleBoard>,
     current: usize,
@@ -105,10 +102,6 @@ impl Board {
             goals_vec.push(self.boards[map].goals.clone());
         }
         goals_vec.concat() //realistically, this vector won't exceed 20 entries so cloning isn't a problem
-    }
-
-    pub fn get_current_goals(&self) -> Vec<Position> {
-        self.boards[self.current].goals.clone()
     }
 
     pub fn get_current_map(&self) -> usize {
@@ -227,4 +220,9 @@ impl FromWorld for Images {
             warp_image,
         }
     }
+}
+
+#[derive(Resource)]
+pub struct BoardStates {
+    pub boards: Vec<Board>,
 }

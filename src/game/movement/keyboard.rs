@@ -11,6 +11,7 @@ pub fn handle_keypress(
     board: Res<Board>,
     mut writer: EventWriter<MoveEvent>,
     mut app_state: ResMut<State<GameState>>,
+    mut board_states: ResMut<BoardStates>,
 ) {
     let direction = if keyboard_input.any_pressed([KeyCode::Up, KeyCode::W]) {
         Direction::Up
@@ -23,6 +24,7 @@ pub fn handle_keypress(
     } else {
         return;
     };
+    board_states.boards.push(board.clone());
     let mut position = board.get_player_position();
     let mut positions = Vec::new();
     let mut next_position = position.next_position(direction);

@@ -1,13 +1,13 @@
 use crate::{
     consts::INITIAL_MAP,
     labels::Labels,
-    resources::{Board, RestartTimer},
+    resources::{Board, BoardStates},
     state::{CurrentMap, DisplayState, GameState, Move},
 };
 use bevy::prelude::*;
 use exit::handle_esc;
 use maps::load_starting_map;
-use victory::{delete_win, handle_box_highlight, handle_win, handle_win_click, setup_win};
+use victory::{delete_win, handle_win, handle_win_click, setup_win};
 
 pub mod display;
 mod exit;
@@ -25,15 +25,13 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_system_set(
             SystemSet::on_enter(DisplayState::Game)
-                .with_system(load_starting_map.before(Labels::Display))
+                .with_system(load_starting_map)
                 .with_system(set_game_state),
         );
         app.add_system_set(
             SystemSet::on_update(DisplayState::Game)
                 .with_system(handle_esc)
                 .with_system(handle_win)
-                .with_system(handle_restart)
-                .with_system(handle_box_highlight.before(Labels::Movement)),
         );
 
         app.add_system_set(
@@ -49,9 +47,9 @@ impl Plugin for GamePlugin {
             )
             .add_system_set(SystemSet::on_exit(DisplayState::Victory).with_system(delete_win));
 
-        app.add_system_set(
-            SystemSet::on_update(DisplayState::Restarting)
-                .with_system(reload.after(Labels::ExitGame)),
+        app.add_system_set(SystemSet::on_update(GameState(Some(Move::Static)))
+                .with_system(handle_restart)
+                .with_system(handle_undo)
         );
     }
 }
@@ -72,40 +70,6 @@ fn set_game_state(
     }
 }
 
-fn handle_restart(
-    mut keyboard_input: ResMut<Input<KeyCode>>,
-    mut display_state: ResMut<State<DisplayState>>,
-    mut current_map: ResMut<State<CurrentMap>>,
-) {
-    if keyboard_input.just_pressed(KeyCode::R) {
-        display_state
-            .set(DisplayState::Restarting)
-            .expect("Could not restart");
-        current_map
-            .set(CurrentMap(None))
-            .expect("Could not restart");
-        keyboard_input.reset(KeyCode::R);
-    }
-}
-
-fn reload(
-    mut display_state: ResMut<State<DisplayState>>,
-    mut current_map: ResMut<State<CurrentMap>>,
-    mut timer: ResMut<RestartTimer>,
-    time: Res<Time>,
-) {
-    timer.0.tick(time.delta()); //workaround to avoid bugs related to switching states in ::on_enter or ::on_exit
-    if timer.0.finished() {
-        timer.0.reset();
-        display_state
-            .set(DisplayState::Game)
-            .expect("Could not reload game");
-        current_map
-            .set(CurrentMap(Some(INITIAL_MAP)))
-            .expect("Could not reload game");
-    }
-}
-
 pub fn reset_game_state(
     mut game_state: ResMut<State<GameState>>,
     mut current_map: ResMut<State<CurrentMap>>,
@@ -119,6 +83,44 @@ pub fn reset_game_state(
         current_map
             .overwrite_set(CurrentMap(None))
             .expect("Could not reset game state");
+    }
+}
+
+fn handle_restart(
+    mut keyboard_input: ResMut<Input<KeyCode>>,
+    // mut display_state: ResMut<State<DisplayState>>,
+    mut current_map: ResMut<State<CurrentMap>>,
+    mut boards: ResMut<BoardStates>,
+    mut board: ResMut<Board>,
+) {
+    if keyboard_input.just_pressed(KeyCode::R) {
+        if !boards.boards.is_empty() {
+            *board = boards.boards[0].clone();
+            boards.boards.clear();
+        }
+        if current_map.current() != &CurrentMap(Some(INITIAL_MAP)) {
+            current_map
+                .set(CurrentMap(Some(INITIAL_MAP)))
+                .expect("Could not restart");
+        }
+        keyboard_input.reset(KeyCode::R);
+    }
+}
+
+pub fn handle_undo(mut keyboard_input: ResMut<Input<KeyCode>>,
+    mut current_map: ResMut<State<CurrentMap>>,
+    mut boards: ResMut<BoardStates>,
+    mut board: ResMut<Board>,
+) {
+    if keyboard_input.just_pressed(KeyCode::U) && !boards.boards.is_empty() {
+        *board = boards.boards.pop().expect("Could not get last move");
+        let new_map = board.get_current_map();
+        if let CurrentMap(Some(state_map)) = current_map.current() {
+            if *state_map != new_map {
+                current_map.set(CurrentMap(Some(new_map))).expect("Could not undo map state");
+            }
+        }
+        keyboard_input.reset(KeyCode::U);
     }
 }
 
