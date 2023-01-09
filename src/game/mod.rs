@@ -88,7 +88,6 @@ pub fn reset_game_state(
 
 fn handle_restart(
     mut keyboard_input: ResMut<Input<KeyCode>>,
-    // mut display_state: ResMut<State<DisplayState>>,
     mut current_map: ResMut<State<CurrentMap>>,
     mut boards: ResMut<BoardStates>,
     mut board: ResMut<Board>,
@@ -124,6 +123,7 @@ pub fn handle_undo(mut keyboard_input: ResMut<Input<KeyCode>>,
     }
 }
 
-pub fn clear_board(mut board: ResMut<Board>) {
+pub fn clear_board(mut board: ResMut<Board>, mut boards: ResMut<BoardStates>) {
     board.clear();
+    boards.boards.clear();
 }

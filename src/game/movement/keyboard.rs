@@ -24,7 +24,6 @@ pub fn handle_keypress(
     } else {
         return;
     };
-    board_states.boards.push(board.clone());
     let mut position = board.get_player_position();
     let mut positions = Vec::new();
     let mut next_position = position.next_position(direction);
@@ -44,6 +43,7 @@ pub fn handle_keypress(
     positions.reverse(); //we want to move the last box as first, so that they don't overlap
     let object_blocking = board.get_object_type(next_position);
     if object_blocking == GameObject::Empty {
+        board_states.boards.push(board.clone());
         writer.send(MoveEvent {
             direction,
             positions,
