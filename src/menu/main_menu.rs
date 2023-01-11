@@ -31,7 +31,7 @@ pub fn handle_menu_click(
             Interaction::Clicked => match item.as_ref() {
                 MenuItemType::LevelSelect => {
                     app_state
-                        .set(DisplayState::LevelSelect)
+                        .push(DisplayState::LevelSelect)
                         .expect("Could not load level select");
                 }
                 MenuItemType::Exit => {

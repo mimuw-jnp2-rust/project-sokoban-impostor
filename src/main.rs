@@ -12,6 +12,7 @@ mod labels;
 mod menu;
 mod resources;
 mod state;
+mod exit;
 
 fn main() {
     App::new()

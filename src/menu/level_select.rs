@@ -84,12 +84,12 @@ pub fn handle_level_click(
                         level_map_str: MAP_NAMES[*number - 1],
                     };
                     app_state
-                        .set(DisplayState::Game)
+                        .push(DisplayState::Game)
                         .expect("Failed to load game");
                 }
                 LevelSelectItemType::Back => {
                     app_state
-                        .set(DisplayState::MainMenu)
+                        .pop()
                         .expect("Going back to main menu failed");
                 }
             },

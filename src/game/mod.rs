@@ -5,12 +5,11 @@ use crate::{
     state::{CurrentMap, DisplayState, GameState, Move},
 };
 use bevy::prelude::*;
-use exit::handle_esc;
+use crate::exit::handle_esc;
 use maps::load_starting_map;
 use victory::{delete_win, handle_win, handle_win_click, setup_win};
 
 pub mod display;
-mod exit;
 pub mod game_objects;
 mod maps;
 pub mod movement;
