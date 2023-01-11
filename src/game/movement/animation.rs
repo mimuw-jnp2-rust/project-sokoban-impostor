@@ -26,23 +26,30 @@ fn modify_transform(
     direction: Direction,
     timer: &ResMut<AnimationTimer>,
     starting_position: Position,
+    movement_data: &Res<MovementData>,
 ) {
+    let distance = if movement_data.is_on_ice {
+        timer.0.percent()
+    }
+    else {
+        animation_weight(timer.0.percent())
+    };
     match direction {
         Direction::Down => {
             transform.translation.y =
-                (starting_position.y as f32 - animation_weight(timer.0.percent())) * TILE_SIZE;
+                (starting_position.y as f32 - distance) * TILE_SIZE;
         }
         Direction::Up => {
             transform.translation.y =
-                (starting_position.y as f32 + animation_weight(timer.0.percent())) * TILE_SIZE;
+                (starting_position.y as f32 + distance) * TILE_SIZE;
         }
         Direction::Left => {
             transform.translation.x =
-                (starting_position.x as f32 - animation_weight(timer.0.percent())) * TILE_SIZE;
+                (starting_position.x as f32 - distance) * TILE_SIZE;
         }
         Direction::Right => {
             transform.translation.x =
-                (starting_position.x as f32 + animation_weight(timer.0.percent())) * TILE_SIZE;
+                (starting_position.x as f32 + distance) * TILE_SIZE;
         }
     }
 }
@@ -66,6 +73,7 @@ pub fn move_animation(
                     direction,
                     &timer,
                     position.previous_position(direction),
+                    &movement_data,
                 );
         }
         }

@@ -186,6 +186,7 @@ pub struct MovementData {
     pub moved_positions: Vec<Position>,
     pub direction: Option<Direction>,
     pub positions_on_ice: Option<Vec<Position>>,
+    pub is_on_ice: bool,
 }
 
 #[derive(Resource)]

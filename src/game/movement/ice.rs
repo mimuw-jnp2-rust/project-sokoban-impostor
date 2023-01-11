@@ -59,5 +59,11 @@ pub fn handle_ice(
             _ => break,
         }
     }
+    if positions_on_ice.is_empty() {
+        movement_data.is_on_ice = false;
+    }
+    else {
+        movement_data.is_on_ice = true;
+    }
     movement_data.positions_on_ice = Some(positions_on_ice);
 }

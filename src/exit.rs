@@ -7,7 +7,7 @@ pub fn handle_esc(
     mut app_state: ResMut<State<DisplayState>>,
     mut app_exit: EventWriter<AppExit>,
 ) {
-    if keyboard_input.pressed(KeyCode::Escape) {
+    if keyboard_input.just_pressed(KeyCode::Escape) {
         if app_state.current() == &DisplayState::MainMenu {
             app_exit.send(AppExit);
             return;                 //just in case to avoid weird behaviour before event is parsed

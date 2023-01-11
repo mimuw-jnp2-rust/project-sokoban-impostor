@@ -33,6 +33,7 @@ fn main() {
             moved_positions: Vec::new(),
             direction: None,
             positions_on_ice: None,
+            is_on_ice: false,
         })
         .insert_resource(BoardStates { boards: Vec::new() })
         .add_plugins(DefaultPlugins)
