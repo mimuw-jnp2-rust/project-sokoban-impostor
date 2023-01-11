@@ -10,6 +10,7 @@ pub const WARP_TEXTURE: &str = "textures/warp.png";
 /** FONTS */
 
 pub const MAIN_MENU_FONT: &str = "fonts/square-deal.ttf";
+pub const LEVEL_FONT: &str = "fonts/VCR_OSD_MONO.ttf";
 
 /** MAPS */
 pub const MAP_NAMES: [&str; LEVEL_AMOUNT as usize] = [
