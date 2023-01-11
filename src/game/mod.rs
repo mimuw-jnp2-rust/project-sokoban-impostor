@@ -31,7 +31,7 @@ impl Plugin for GamePlugin {
         app.add_system_set(
             SystemSet::on_update(DisplayState::Game)
                 .with_system(handle_esc)
-                .with_system(handle_win)
+                .with_system(handle_win),
         );
 
         app.add_system_set(
@@ -47,9 +47,10 @@ impl Plugin for GamePlugin {
             )
             .add_system_set(SystemSet::on_exit(DisplayState::Victory).with_system(delete_win));
 
-        app.add_system_set(SystemSet::on_update(GameState(Some(Move::Static)))
+        app.add_system_set(
+            SystemSet::on_update(GameState(Some(Move::Static)))
                 .with_system(handle_restart)
-                .with_system(handle_undo)
+                .with_system(handle_undo),
         );
     }
 }
@@ -106,7 +107,8 @@ fn handle_restart(
     }
 }
 
-pub fn handle_undo(mut keyboard_input: ResMut<Input<KeyCode>>,
+pub fn handle_undo(
+    mut keyboard_input: ResMut<Input<KeyCode>>,
     mut current_map: ResMut<State<CurrentMap>>,
     mut boards: ResMut<BoardStates>,
     mut board: ResMut<Board>,
@@ -116,7 +118,9 @@ pub fn handle_undo(mut keyboard_input: ResMut<Input<KeyCode>>,
         let new_map = board.get_current_map();
         if let CurrentMap(Some(state_map)) = current_map.current() {
             if *state_map != new_map {
-                current_map.set(CurrentMap(Some(new_map))).expect("Could not undo map state");
+                current_map
+                    .set(CurrentMap(Some(new_map)))
+                    .expect("Could not undo map state");
             }
         }
         keyboard_input.reset(KeyCode::U);

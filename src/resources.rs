@@ -5,7 +5,7 @@ use crate::game::game_objects::{Direction, Position};
 use crate::game::game_objects::{Floor, GameObject};
 
 #[derive(Resource)]
-pub struct InputTimer(pub Timer);
+pub struct AnimationTimer(pub Timer);
 
 #[derive(Resource)]
 pub struct VictoryTimer(pub Timer);
@@ -24,7 +24,7 @@ struct SingleBoard {
     goals: Vec<Position>,
     map_size: MapSize,
     player_position: Position,
-    warp_positions: [Position; MAX_MAPS]
+    warp_positions: [Position; MAX_MAPS],
 }
 
 #[derive(Resource, Debug, Clone)]
@@ -47,7 +47,7 @@ impl Board {
                     height: 0,
                 },
                 player_position: Position { x: 0, y: 0, map },
-                warp_positions: [Position { x: 0, y: 0, map}; 10],
+                warp_positions: [Position { x: 0, y: 0, map }; 10],
             });
         }
         Board {
@@ -72,14 +72,11 @@ impl Board {
         self.boards[self.current].player_position
     }
 
-    pub fn get_entity(&self, position: Position) -> Entity {
-        if position.map != self.current {
-            panic!("Asking for entity from other map");
-        }
-        *self.boards[self.current]
+    pub fn get_entity(&self, position: Position) -> Option<Entity> {
+        self.boards[self.current]
             .entities
             .get(&position)
-            .expect("Tried searching entity of invalid position")
+            .and_then(|entity| Some(*entity))
     }
 
     pub fn get_object_type(&self, position: Position) -> GameObject {
@@ -140,24 +137,38 @@ impl Board {
         self.boards[position.map]
             .objects
             .insert(position.next_position(dir), object);
-        if position.map == self.current {
-            let entity = self.boards[position.map]
-                .entities
-                .remove(&position)
-                .expect("Entity not in board");
-            self.boards[position.map]
-                .entities
-                .insert(position.next_position(dir), entity);
-        }
+        
+        self.boards[position.map]
+            .entities
+            .remove(&position)
+            .and_then(|entity| {
+                self.boards[position.map]
+                    .entities
+                    .insert(position.next_position(dir), entity)
+            });
     }
 
     pub fn delete_object(&mut self, position: Position) -> Entity {
-        self.boards[position.map].objects.remove(&position).expect("Could not remove object");
-        self.boards[position.map].entities.remove(&position).expect("Could not remove entity")
+        self.boards[position.map]
+            .objects
+            .remove(&position)
+            .expect("Could not remove object");
+        self.boards[position.map]
+            .entities
+            .remove(&position)
+            .expect("Could not remove entity")
     }
 
     pub fn get_warp_position(&self, from: usize, to: usize) -> Position {
         self.boards[from].warp_positions[to]
+    }
+
+    pub fn get_next_position_for_move(&self, position: Position, direction: Direction) -> Position {
+        let mut next_position = position.next_position(direction);
+        if let Floor::Warp(map) = self.get_floor_type(next_position) {
+            next_position = self.get_warp_position(map, self.current);
+        }
+        next_position
     }
 
     pub fn clear(&mut self) {
@@ -174,7 +185,7 @@ impl Board {
 pub struct MovementData {
     pub moved_positions: Vec<Position>,
     pub direction: Option<Direction>,
-    pub positions_on_ice: Option<Vec<Position>>
+    pub positions_on_ice: Option<Vec<Position>>,
 }
 
 #[derive(Resource)]

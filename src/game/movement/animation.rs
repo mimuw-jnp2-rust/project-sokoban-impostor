@@ -1,6 +1,6 @@
 use crate::{
     consts::TILE_SIZE,
-    resources::{Board, InputTimer, MovementData},
+    resources::{AnimationTimer, Board, MovementData},
 };
 use bevy::prelude::*;
 
@@ -24,7 +24,7 @@ fn animation_weight(number: f32) -> f32 {
 fn modify_transform(
     mut transform: Mut<Transform>,
     direction: Direction,
-    timer: &ResMut<InputTimer>,
+    timer: &ResMut<AnimationTimer>,
     starting_position: Position,
 ) {
     match direction {
@@ -51,29 +51,28 @@ pub fn move_animation(
     time: Res<Time>,
     movement_data: Res<MovementData>,
     mut query: Query<&mut Transform, MovableInQuery>,
-    mut timer: ResMut<InputTimer>,
+    mut timer: ResMut<AnimationTimer>,
     board: Res<Board>,
 ) {
     timer.0.tick(time.delta());
     let direction_opt = movement_data.direction;
     if let Some(direction) = direction_opt {
         for position in movement_data.moved_positions.iter() {
-            if position.map != board.get_current_map() {
-                continue;   //we do not want to animate objects which aren't rendered
-            }
-            let entity = board.get_entity(*position);
-            let transform = query.get_mut(entity).expect("Moved box entity not found");
-            modify_transform(
-                transform,
-                direction,
-                &timer,
-                position.previous_position(direction),
-            );
+            let entity_opt= board.get_entity(*position);
+            if let Some(entity) = entity_opt {
+                let transform = query.get_mut(entity).expect("Moved box entity not found");
+                modify_transform(
+                    transform,
+                    direction,
+                    &timer,
+                    position.previous_position(direction),
+                );
+        }
         }
     }
 }
 
-pub fn end_animation(mut movement_data: ResMut<MovementData>, mut timer: ResMut<InputTimer>) {
+pub fn end_animation(mut movement_data: ResMut<MovementData>, mut timer: ResMut<AnimationTimer>) {
     movement_data.moved_positions.clear();
     movement_data.direction = None;
     timer.0.reset();

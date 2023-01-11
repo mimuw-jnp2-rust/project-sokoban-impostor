@@ -28,17 +28,10 @@ pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images
                     let image;
                     if board.get_floor_type(position) == Floor::Goal {
                         image = images.box_on_goal_image.clone();
-                    }
-                    else {
+                    } else {
                         image = images.box_image.clone();
                     }
-                    let entity = spawn_entity(
-                        Box,
-                        &mut commands,
-                        image,
-                        position,
-                        OBJECT_Z_INDEX,
-                    );
+                    let entity = spawn_entity(Box, &mut commands, image, position, OBJECT_Z_INDEX);
                     board.insert_entity(position, entity);
                 }
                 GameObject::Wall => {
@@ -123,18 +116,40 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             Wall,
             &mut commands,
             images.wall_image.clone(),
-            Position { x: left_border, y, map },
+            Position {
+                x: left_border,
+                y,
+                map,
+            },
             OBJECT_Z_INDEX,
         );
         spawn_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),
-            Position { x: right_border, y, map },
+            Position {
+                x: right_border,
+                y,
+                map,
+            },
             OBJECT_Z_INDEX,
         );
-        board.insert_object(Position { x: left_border, y, map }, GameObject::Wall);
-        board.insert_object(Position { x: right_border, y, map }, GameObject::Wall);
+        board.insert_object(
+            Position {
+                x: left_border,
+                y,
+                map,
+            },
+            GameObject::Wall,
+        );
+        board.insert_object(
+            Position {
+                x: right_border,
+                y,
+                map,
+            },
+            GameObject::Wall,
+        );
     }
     //spawn vertical borders for the level and insert it to board
     for x in left_border..(right_border + 1) {
@@ -142,7 +157,11 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             Wall,
             &mut commands,
             images.wall_image.clone(),
-            Position { x, y: top_border, map },
+            Position {
+                x,
+                y: top_border,
+                map,
+            },
             OBJECT_Z_INDEX,
         );
         spawn_entity(
@@ -156,7 +175,14 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             },
             OBJECT_Z_INDEX,
         );
-        board.insert_object(Position { x, y: top_border, map }, GameObject::Wall);
+        board.insert_object(
+            Position {
+                x,
+                y: top_border,
+                map,
+            },
+            GameObject::Wall,
+        );
         board.insert_object(
             Position {
                 x,

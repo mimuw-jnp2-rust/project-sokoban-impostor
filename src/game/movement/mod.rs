@@ -1,6 +1,7 @@
 use crate::{
     labels::Labels,
-    state::{GameState, Move}, resources::{MovementData, InputTimer},
+    resources::{AnimationTimer, MovementData},
+    state::{GameState, Move},
 };
 use bevy::prelude::*;
 
@@ -29,10 +30,10 @@ impl Plugin for MovementPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
-                .with_system(move_animation.before(handle_ice))
-                .with_system(handle_ice.before(handle_warp))
-                .with_system(handle_warp.before(continue_animation))
-                .with_system(continue_animation)
+                .with_system(move_animation.before(handle_warp).before(handle_ice))
+                .with_system(handle_warp)
+                .with_system(handle_ice.before(continue_animation))     //otherwise it could ignore the positions_on_ice and end the animation
+                .with_system(continue_animation),
         )
         .add_system_set(
             SystemSet::on_exit(GameState(Some(Move::Moving))).with_system(end_animation),
@@ -47,15 +48,26 @@ impl Plugin for MovementPlugin {
     }
 }
 
-fn continue_animation(mut movement_data: ResMut<MovementData>, mut app_state: ResMut<State<GameState>>, mut writer: EventWriter<MoveEvent>, mut timer: ResMut<InputTimer>) {
+fn continue_animation(
+    mut movement_data: ResMut<MovementData>,
+    mut app_state: ResMut<State<GameState>>,
+    mut writer: EventWriter<MoveEvent>,
+    mut timer: ResMut<AnimationTimer>,
+) {
     if !timer.0.finished() {
         return;
     }
-    let positions = movement_data.positions_on_ice.clone().expect("Positions on ice doesn't exist in continue animation");
+    let positions = movement_data
+        .positions_on_ice
+        .clone();
+    if positions == None {
+        return;
+    }
+    let positions = positions.unwrap();
     if !positions.is_empty() {
         writer.send(MoveEvent {
             direction: movement_data.direction.expect("Movement missing direction"),
-            positions,           //this vector has less than 20 entries
+            positions, //this vector has less than 20 entries
         });
         movement_data.direction = None;
         movement_data.moved_positions.clear();

@@ -5,7 +5,7 @@ use crate::consts::*;
 use crate::game::{game_objects::Position, GameItem};
 use crate::labels::Labels;
 use crate::resources::Images;
-use crate::state::{Move, GameState};
+use crate::state::{GameState, Move};
 
 use self::background::setup_border;
 
@@ -17,11 +17,12 @@ impl Plugin for DisplayPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Images>();
 
-        app.add_system_set(SystemSet::on_update(GameState(Some(Move::Static)))
-            .label(Labels::Display)
-            .with_system(despawn_board.before(setup_background).before(setup_border))
-            .with_system(setup_background)
-            .with_system(setup_border)
+        app.add_system_set(
+            SystemSet::on_update(GameState(Some(Move::Static)))
+                .label(Labels::Display)
+                .with_system(despawn_board.before(setup_background).before(setup_border))
+                .with_system(setup_background)
+                .with_system(setup_border),
         );
     }
 }

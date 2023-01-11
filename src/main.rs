@@ -15,7 +15,7 @@ mod state;
 
 fn main() {
     App::new()
-        .insert_resource(InputTimer(Timer::from_seconds(
+        .insert_resource(AnimationTimer(Timer::from_seconds(
             MOVE_ANIMATION_TIME,
             TimerMode::Once,
         )))
@@ -33,9 +33,7 @@ fn main() {
             direction: None,
             positions_on_ice: None,
         })
-        .insert_resource(BoardStates {
-            boards: Vec::new(),
-        })
+        .insert_resource(BoardStates { boards: Vec::new() })
         .add_plugins(DefaultPlugins)
         .add_plugin(MenusPlugin)
         .add_plugin(GamePlugin)

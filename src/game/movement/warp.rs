@@ -1,12 +1,16 @@
 use bevy::prelude::*;
 
-use crate::{resources::{Board, InputTimer, MovementData}, state::CurrentMap, game::game_objects::{Floor, GameObject}};
+use crate::{
+    game::game_objects::{Floor, GameObject},
+    resources::{AnimationTimer, Board, MovementData},
+    state::CurrentMap,
+};
 
 pub fn handle_warp(
     mut current_map: ResMut<State<CurrentMap>>,
     movement_data: Res<MovementData>,
     mut board: ResMut<Board>,
-    timer: Res<InputTimer>,
+    timer: Res<AnimationTimer>,
     mut commands: Commands,
 ) {
     if !timer.0.finished() {
@@ -34,7 +38,7 @@ pub fn handle_warp(
                         .expect("Could not switch maps state");
                     board.set_current_map(map);
                 }
-                _ => ()
+                _ => (),
             }
         }
     }

@@ -9,6 +9,7 @@ pub fn handle_move(
     mut board: ResMut<Board>,
     mut movement_data: ResMut<MovementData>,
 ) {
+    //updates the positions in MoveEvent without checking anything. We assume that the positions are already correct
     for event in reader.iter() {
         let dir = event.direction;
         let positions = &event.positions;
