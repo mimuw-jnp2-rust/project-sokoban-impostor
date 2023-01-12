@@ -14,6 +14,11 @@ use warp::handle_warp;
 
 use crate::game::game_objects::{Box, Player};
 
+use super::display::{
+    background::{render_board, render_border},
+    despawn_board,
+};
+
 mod animation;
 mod consts;
 mod events;
@@ -31,8 +36,11 @@ impl Plugin for MovementPlugin {
             SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
                 .with_system(move_animation.before(handle_warp).before(handle_ice))
-                .with_system(handle_warp.before(continue_animation))
-                .with_system(handle_ice.before(continue_animation))     //otherwise it could ignore the positions_on_ice and end the animation
+                .with_system(handle_warp.before(despawn_board))
+                .with_system(handle_ice.before(despawn_board)) //otherwise it could ignore the positions_on_ice and end the animation
+                .with_system(despawn_board.before(render_board).before(render_border))
+                .with_system(render_board.before(continue_animation))
+                .with_system(render_border.before(continue_animation))
                 .with_system(continue_animation),
         )
         .add_system_set(
@@ -57,10 +65,8 @@ fn continue_animation(
     if !timer.0.finished() {
         return;
     }
-    let positions = movement_data
-        .positions_on_ice
-        .clone();
-    if positions == None {
+    let positions = movement_data.positions_on_ice.clone();
+    if positions.is_none() {
         return;
     }
     let positions = positions.unwrap();

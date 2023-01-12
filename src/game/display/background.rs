@@ -2,16 +2,24 @@ use bevy::prelude::*;
 
 use crate::consts::*;
 use crate::game::game_objects::*;
-use crate::resources::{Board, Images};
+use crate::resources::{AnimationTimer, Board, Images};
 
-use super::spawn_entity;
+use super::render_entity;
 
 fn offset_coordinate(coord: i32, max: i32) -> i32 {
     coord - (max / 2)
 }
 
 //render the entire map based on Board
-pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
+pub fn render_board(
+    mut commands: Commands,
+    mut board: ResMut<Board>,
+    images: Res<Images>,
+    timer: Res<AnimationTimer>,
+) {
+    if !timer.0.finished() && timer.0.elapsed_secs() != 0. {
+        return;
+    }
     let map_size = board.get_map_size();
     let bottom_border = offset_coordinate(0, map_size.height as i32);
     let top_border = offset_coordinate(map_size.height as i32 - 1, map_size.height as i32);
@@ -25,17 +33,16 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
             let game_object = board.get_object_type(position);
             match game_object {
                 GameObject::Box => {
-                    let image;
-                    if board.get_floor_type(position) == Floor::Goal {
-                        image = images.box_on_goal_image.clone();
+                    let image = if board.get_floor_type(position) == Floor::Goal {
+                        images.box_on_goal_image.clone()
                     } else {
-                        image = images.box_image.clone();
-                    }
-                    let entity = spawn_entity(Box, &mut commands, image, position, OBJECT_Z_INDEX);
+                        images.box_image.clone()
+                    };
+                    let entity = render_entity(Box, &mut commands, image, position, OBJECT_Z_INDEX);
                     board.insert_entity(position, entity);
                 }
                 GameObject::Wall => {
-                    spawn_entity(
+                    render_entity(
                         Wall,
                         &mut commands,
                         images.wall_image.clone(),
@@ -44,7 +51,7 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
                     );
                 }
                 GameObject::Player => {
-                    let entity = spawn_entity(
+                    let entity = render_entity(
                         Player,
                         &mut commands,
                         images.player_image.clone(),
@@ -63,7 +70,7 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
             let floor = board.get_floor_type(position);
             match floor {
                 Floor::Ice => {
-                    spawn_entity(
+                    render_entity(
                         Ice,
                         &mut commands,
                         images.ice_image.clone(),
@@ -72,7 +79,7 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
                     );
                 }
                 Floor::Tile => {
-                    spawn_entity(
+                    render_entity(
                         Background,
                         &mut commands,
                         images.tile_image.clone(),
@@ -81,7 +88,7 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
                     );
                 }
                 Floor::Goal => {
-                    spawn_entity(
+                    render_entity(
                         Goal,
                         &mut commands,
                         images.goal_image.clone(),
@@ -90,7 +97,7 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
                     );
                 }
                 Floor::Warp(_) => {
-                    spawn_entity(
+                    render_entity(
                         Warp,
                         &mut commands,
                         images.warp_image.clone(),
@@ -103,7 +110,15 @@ pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Re
     }
 }
 
-pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
+pub fn render_border(
+    mut commands: Commands,
+    mut board: ResMut<Board>,
+    images: Res<Images>,
+    timer: Res<AnimationTimer>,
+) {
+    if !timer.0.finished() && timer.0.elapsed_secs() != 0. {
+        return;
+    }
     let map_size = board.get_map_size();
     let bottom_border = offset_coordinate(-1, map_size.height as i32);
     let top_border = offset_coordinate(map_size.height as i32, map_size.height as i32);
@@ -112,7 +127,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
     let map = board.get_current_map();
     //spawn horizontal border for the level and insert it to board
     for y in bottom_border..(top_border + 1) {
-        spawn_entity(
+        render_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),
@@ -123,7 +138,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             },
             OBJECT_Z_INDEX,
         );
-        spawn_entity(
+        render_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),
@@ -153,7 +168,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
     }
     //spawn vertical borders for the level and insert it to board
     for x in left_border..(right_border + 1) {
-        spawn_entity(
+        render_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),
@@ -164,7 +179,7 @@ pub fn setup_border(mut commands: Commands, mut board: ResMut<Board>, images: Re
             },
             OBJECT_Z_INDEX,
         );
-        spawn_entity(
+        render_entity(
             Wall,
             &mut commands,
             images.wall_image.clone(),

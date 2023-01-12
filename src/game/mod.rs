@@ -1,4 +1,5 @@
 use crate::exit::handle_esc;
+use crate::utils::delete_all_components;
 use crate::{
     consts::INITIAL_MAP,
     labels::Labels,
@@ -7,12 +8,16 @@ use crate::{
 };
 use bevy::prelude::*;
 use maps::load_starting_map;
-use victory::{delete_win, handle_win, handle_win_click, setup_win};
+use restart::{handle_restart, handle_undo};
+use victory::{handle_win, handle_win_click, setup_win};
+
+use self::victory::VictoryItem;
 
 pub mod display;
 pub mod game_objects;
 mod maps;
 pub mod movement;
+mod restart;
 mod victory;
 
 #[derive(Component)]
@@ -44,7 +49,10 @@ impl Plugin for GamePlugin {
             .add_system_set(
                 SystemSet::on_update(DisplayState::Victory).with_system(handle_win_click),
             )
-            .add_system_set(SystemSet::on_exit(DisplayState::Victory).with_system(delete_win));
+            .add_system_set(
+                SystemSet::on_exit(DisplayState::Victory)
+                    .with_system(delete_all_components::<VictoryItem>),
+            );
 
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Static)))
@@ -83,46 +91,6 @@ pub fn reset_game_state(
         current_map
             .overwrite_set(CurrentMap(None))
             .expect("Could not reset game state");
-    }
-}
-
-fn handle_restart(
-    mut keyboard_input: ResMut<Input<KeyCode>>,
-    mut current_map: ResMut<State<CurrentMap>>,
-    mut boards: ResMut<BoardStates>,
-    mut board: ResMut<Board>,
-) {
-    if keyboard_input.just_pressed(KeyCode::R) {
-        if !boards.boards.is_empty() {
-            *board = boards.boards[0].clone();
-            boards.boards.clear();
-        }
-        if current_map.current() != &CurrentMap(Some(INITIAL_MAP)) {
-            current_map
-                .set(CurrentMap(Some(INITIAL_MAP)))
-                .expect("Could not restart");
-        }
-        keyboard_input.reset(KeyCode::R);
-    }
-}
-
-pub fn handle_undo(
-    mut keyboard_input: ResMut<Input<KeyCode>>,
-    mut current_map: ResMut<State<CurrentMap>>,
-    mut boards: ResMut<BoardStates>,
-    mut board: ResMut<Board>,
-) {
-    if keyboard_input.just_pressed(KeyCode::U) && !boards.boards.is_empty() {
-        *board = boards.boards.pop().expect("Could not get last move");
-        let new_map = board.get_current_map();
-        if let CurrentMap(Some(state_map)) = current_map.current() {
-            if *state_map != new_map {
-                current_map
-                    .set(CurrentMap(Some(new_map)))
-                    .expect("Could not undo map state");
-            }
-        }
-        keyboard_input.reset(KeyCode::U);
     }
 }
 

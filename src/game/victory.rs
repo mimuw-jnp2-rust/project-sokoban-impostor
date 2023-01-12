@@ -83,9 +83,3 @@ pub fn handle_win_click(
         keyboard_input.reset(KeyCode::Return);
     }
 }
-
-pub fn delete_win(query: Query<Entity, With<VictoryItem>>, mut commands: Commands) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-}

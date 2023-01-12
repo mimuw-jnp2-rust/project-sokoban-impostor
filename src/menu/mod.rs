@@ -2,10 +2,12 @@ use bevy::prelude::*;
 
 mod level_select;
 mod main_menu;
-use crate::{exit::handle_esc, state::DisplayState};
+use crate::{exit::handle_esc, state::DisplayState, utils::delete_all_components};
 
-use level_select::{delete_level_select, handle_level_click, setup_level_select};
-use main_menu::{delete_main_menu, handle_menu_click, setup_main_menu};
+use level_select::{handle_level_click, setup_level_select};
+use main_menu::{handle_menu_click, setup_main_menu};
+
+use self::{level_select::LevelSelectItem, main_menu::MainMenuItem};
 
 pub struct MenusPlugin;
 
@@ -20,8 +22,14 @@ impl Plugin for MenusPlugin {
                 .with_system(handle_menu_click)
                 .with_system(handle_esc),
         )
-        .add_system_set(SystemSet::on_pause(DisplayState::MainMenu).with_system(delete_main_menu))
-        .add_system_set(SystemSet::on_exit(DisplayState::MainMenu).with_system(delete_main_menu));
+        .add_system_set(
+            SystemSet::on_pause(DisplayState::MainMenu)
+                .with_system(delete_all_components::<MainMenuItem>),
+        )
+        .add_system_set(
+            SystemSet::on_exit(DisplayState::MainMenu)
+                .with_system(delete_all_components::<MainMenuItem>),
+        );
 
         app.add_system_set(
             SystemSet::on_enter(DisplayState::LevelSelect).with_system(setup_level_select),
@@ -35,10 +43,12 @@ impl Plugin for MenusPlugin {
                 .with_system(handle_esc),
         )
         .add_system_set(
-            SystemSet::on_exit(DisplayState::LevelSelect).with_system(delete_level_select),
+            SystemSet::on_exit(DisplayState::LevelSelect)
+                .with_system(delete_all_components::<LevelSelectItem>),
         )
         .add_system_set(
-            SystemSet::on_pause(DisplayState::LevelSelect).with_system(delete_level_select),
+            SystemSet::on_pause(DisplayState::LevelSelect)
+                .with_system(delete_all_components::<LevelSelectItem>),
         );
     }
 }

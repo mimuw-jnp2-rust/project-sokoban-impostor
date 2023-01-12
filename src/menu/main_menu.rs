@@ -12,11 +12,11 @@ pub enum MenuItemType {
     Exit,
 }
 
-pub fn delete_main_menu(mut commands: Commands, query: Query<Entity, With<MainMenuItem>>) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-}
+// pub fn delete_main_menu(mut commands: Commands, query: Query<Entity, With<MainMenuItem>>) {
+//     for entity in query.iter() {
+//         commands.entity(entity).despawn_recursive();
+//     }
+// }
 
 pub fn handle_menu_click(
     mut app_state: ResMut<State<DisplayState>>,

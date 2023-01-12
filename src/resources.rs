@@ -73,10 +73,7 @@ impl Board {
     }
 
     pub fn get_entity(&self, position: Position) -> Option<Entity> {
-        self.boards[self.current]
-            .entities
-            .get(&position)
-            .and_then(|entity| Some(*entity))
+        self.boards[self.current].entities.get(&position).copied()
     }
 
     pub fn get_object_type(&self, position: Position) -> GameObject {

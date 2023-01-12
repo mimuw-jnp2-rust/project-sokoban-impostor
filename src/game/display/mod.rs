@@ -4,11 +4,11 @@ use bevy::prelude::*;
 use crate::consts::*;
 use crate::game::{game_objects::Position, GameItem};
 use crate::labels::Labels;
-use crate::resources::Images;
-use crate::state::{GameState, Move, DisplayState};
+use crate::resources::{AnimationTimer, Images};
+use crate::state::{DisplayState, GameState, Move};
 
-use self::background::setup_border;
-use self::text::{display_level_text, despawn_level_text};
+use self::background::render_border;
+use self::text::{despawn_level_text, display_level_text};
 
 pub mod background;
 mod text;
@@ -20,23 +20,21 @@ impl Plugin for DisplayPlugin {
         app.init_resource::<Images>();
         app.add_startup_system(window_set_fullscreen);
 
-        app.add_system_set(SystemSet::on_enter(DisplayState::Game)
-            .with_system(display_level_text)
-        );
+        app.add_system_set(SystemSet::on_enter(DisplayState::Game).with_system(display_level_text));
 
         app.add_system_set(SystemSet::on_exit(DisplayState::Game).with_system(despawn_level_text));
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Static)))
                 .label(Labels::Display)
-                .with_system(despawn_board.before(render_board).before(setup_border))
+                .with_system(despawn_board.before(render_board).before(render_border))
                 .with_system(render_board)
-                .with_system(setup_border),
+                .with_system(render_border),
         );
     }
 }
 
 //render an object with a given image and position
-pub fn spawn_entity<T>(
+pub fn render_entity<T>(
     component: T,
     commands: &mut Commands,
     image: Handle<Image>,
@@ -66,7 +64,15 @@ where
         .id()
 }
 
-fn despawn_board(query: Query<Entity, With<GameItem>>, mut commands: Commands) {
+pub fn despawn_board(
+    query: Query<Entity, With<GameItem>>,
+    mut commands: Commands,
+    timer: Res<AnimationTimer>,
+) {
+    if !timer.0.finished() && timer.0.elapsed_secs() != 0. {
+        //so the board doesn't re-render
+        return;
+    }
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
