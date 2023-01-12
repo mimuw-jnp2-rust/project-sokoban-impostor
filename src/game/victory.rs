@@ -78,7 +78,7 @@ pub fn handle_win_click(
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
         app_state
-            .set(DisplayState::MainMenu)
+            .set(DisplayState::LevelSelect)
             .expect("Could not go out of victory screen");
         keyboard_input.reset(KeyCode::Return);
     }

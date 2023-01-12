@@ -21,24 +21,17 @@ pub fn handle_warp(
         let floor = board.get_floor_type(position);
         if let Floor::Warp(map) = floor {
             let object = board.get_object_type(position);
-            match object {
-                GameObject::Box => {
-                    let entity = board.delete_object(position);
-                    commands.entity(entity).despawn();
-                    let warp_position = board.get_warp_position(map, board.get_current_map());
-                    board.insert_object(warp_position, GameObject::Box);
-                }
-                GameObject::Player => {
-                    let entity = board.delete_object(position);
-                    commands.entity(entity).despawn();
-                    let warp_position = board.get_warp_position(map, board.get_current_map());
-                    board.insert_object(warp_position, GameObject::Player);
-                    current_map
-                        .push(CurrentMap(Some(map)))
-                        .expect("Could not switch maps state");
-                    board.set_current_map(map);
-                }
-                _ => (),
+            if object == GameObject::Player || object == GameObject::Box {
+                let entity = board.delete_object(position);
+                commands.entity(entity).despawn();
+                let warp_position = board.get_warp_position(map, board.get_current_map());
+                board.insert_object(warp_position, object);
+            }
+            if object == GameObject::Player {
+                current_map
+                    .push(CurrentMap(Some(map)))
+                    .expect("Could not switch maps state");
+                board.set_current_map(map);
             }
         }
     }

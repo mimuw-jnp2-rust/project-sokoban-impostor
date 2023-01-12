@@ -1,4 +1,4 @@
-use background::setup_background;
+use background::render_board;
 use bevy::prelude::*;
 
 use crate::consts::*;
@@ -10,7 +10,7 @@ use crate::state::{GameState, Move, DisplayState};
 use self::background::setup_border;
 use self::text::{display_level_text, despawn_level_text};
 
-mod background;
+pub mod background;
 mod text;
 
 pub struct DisplayPlugin;
@@ -28,8 +28,8 @@ impl Plugin for DisplayPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Static)))
                 .label(Labels::Display)
-                .with_system(despawn_board.before(setup_background).before(setup_border))
-                .with_system(setup_background)
+                .with_system(despawn_board.before(render_board).before(setup_border))
+                .with_system(render_board)
                 .with_system(setup_border),
         );
     }

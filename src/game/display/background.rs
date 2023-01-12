@@ -11,7 +11,7 @@ fn offset_coordinate(coord: i32, max: i32) -> i32 {
 }
 
 //render the entire map based on Board
-pub fn setup_background(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
+pub fn render_board(mut commands: Commands, mut board: ResMut<Board>, images: Res<Images>) {
     let map_size = board.get_map_size();
     let bottom_border = offset_coordinate(0, map_size.height as i32);
     let top_border = offset_coordinate(map_size.height as i32 - 1, map_size.height as i32);

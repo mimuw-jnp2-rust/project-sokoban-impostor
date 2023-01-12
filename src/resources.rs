@@ -137,7 +137,7 @@ impl Board {
         self.boards[position.map]
             .objects
             .insert(position.next_position(dir), object);
-        
+
         self.boards[position.map]
             .entities
             .remove(&position)

@@ -31,7 +31,7 @@ impl Plugin for MovementPlugin {
             SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
                 .with_system(move_animation.before(handle_warp).before(handle_ice))
-                .with_system(handle_warp)
+                .with_system(handle_warp.before(continue_animation))
                 .with_system(handle_ice.before(continue_animation))     //otherwise it could ignore the positions_on_ice and end the animation
                 .with_system(continue_animation),
         )

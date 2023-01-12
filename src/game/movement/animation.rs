@@ -29,27 +29,23 @@ fn modify_transform(
     movement_data: &Res<MovementData>,
 ) {
     let distance = if movement_data.is_on_ice {
+        //on ice we want to have uniform movement animation
         timer.0.percent()
-    }
-    else {
+    } else {
         animation_weight(timer.0.percent())
     };
     match direction {
         Direction::Down => {
-            transform.translation.y =
-                (starting_position.y as f32 - distance) * TILE_SIZE;
+            transform.translation.y = (starting_position.y as f32 - distance) * TILE_SIZE;
         }
         Direction::Up => {
-            transform.translation.y =
-                (starting_position.y as f32 + distance) * TILE_SIZE;
+            transform.translation.y = (starting_position.y as f32 + distance) * TILE_SIZE;
         }
         Direction::Left => {
-            transform.translation.x =
-                (starting_position.x as f32 - distance) * TILE_SIZE;
+            transform.translation.x = (starting_position.x as f32 - distance) * TILE_SIZE;
         }
         Direction::Right => {
-            transform.translation.x =
-                (starting_position.x as f32 + distance) * TILE_SIZE;
+            transform.translation.x = (starting_position.x as f32 + distance) * TILE_SIZE;
         }
     }
 }
@@ -65,7 +61,7 @@ pub fn move_animation(
     let direction_opt = movement_data.direction;
     if let Some(direction) = direction_opt {
         for position in movement_data.moved_positions.iter() {
-            let entity_opt= board.get_entity(*position);
+            let entity_opt = board.get_entity(*position);
             if let Some(entity) = entity_opt {
                 let transform = query.get_mut(entity).expect("Moved box entity not found");
                 modify_transform(
@@ -75,7 +71,7 @@ pub fn move_animation(
                     position.previous_position(direction),
                     &movement_data,
                 );
-        }
+            }
         }
     }
 }

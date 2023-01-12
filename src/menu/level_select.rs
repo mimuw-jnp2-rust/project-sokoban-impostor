@@ -88,9 +88,7 @@ pub fn handle_level_click(
                         .expect("Failed to load game");
                 }
                 LevelSelectItemType::Back => {
-                    app_state
-                        .pop()
-                        .expect("Going back to main menu failed");
+                    app_state.pop().expect("Going back to main menu failed");
                 }
             },
             Interaction::Hovered => {

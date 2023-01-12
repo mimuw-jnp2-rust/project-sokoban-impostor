@@ -1,4 +1,4 @@
-use bevy::{prelude::*, app::AppExit};
+use bevy::{app::AppExit, prelude::*};
 
 use crate::state::DisplayState;
 
@@ -10,11 +10,9 @@ pub fn handle_esc(
     if keyboard_input.just_pressed(KeyCode::Escape) {
         if app_state.current() == &DisplayState::MainMenu {
             app_exit.send(AppExit);
-            return;                 //just in case to avoid weird behaviour before event is parsed
+            return; //just in case to avoid weird behaviour before event is parsed
         }
-        app_state
-            .pop()
-            .expect("Could not exit");
+        app_state.pop().expect("Could not exit");
         keyboard_input.reset(KeyCode::Escape);
     }
 }

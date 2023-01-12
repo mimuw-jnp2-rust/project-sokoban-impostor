@@ -1,3 +1,4 @@
+use crate::exit::handle_esc;
 use crate::{
     consts::INITIAL_MAP,
     labels::Labels,
@@ -5,7 +6,6 @@ use crate::{
     state::{CurrentMap, DisplayState, GameState, Move},
 };
 use bevy::prelude::*;
-use crate::exit::handle_esc;
 use maps::load_starting_map;
 use victory::{delete_win, handle_win, handle_win_click, setup_win};
 

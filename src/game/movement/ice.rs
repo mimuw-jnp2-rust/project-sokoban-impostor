@@ -38,13 +38,15 @@ pub fn handle_ice(
                     // if there are multiple stationary boxes ahead, either the last one moves
                     // (if it's on ice) or they remain stationary otherwise
                     let mut last_box_position = object_position;
-                    let mut next_object_position = board.get_next_position_for_move(last_box_position, direction);
+                    let mut next_object_position =
+                        board.get_next_position_for_move(last_box_position, direction);
                     let mut next_object = board.get_object_type(next_object_position);
                     while next_object == GameObject::Box
                         && board.get_floor_type(next_object_position) == Floor::Ice
                     {
                         last_box_position = next_object_position;
-                        next_object_position = board.get_next_position_for_move(next_object_position, direction);
+                        next_object_position =
+                            board.get_next_position_for_move(next_object_position, direction);
                         next_object = board.get_object_type(next_object_position);
                     }
                     if next_object == GameObject::Empty {
@@ -61,8 +63,7 @@ pub fn handle_ice(
     }
     if positions_on_ice.is_empty() {
         movement_data.is_on_ice = false;
-    }
-    else {
+    } else {
         movement_data.is_on_ice = true;
     }
     movement_data.positions_on_ice = Some(positions_on_ice);

@@ -7,12 +7,12 @@ use menu::MenusPlugin;
 use resources::*;
 use state::{CurrentMap, DisplayState, GameState};
 mod consts;
+mod exit;
 mod game;
 mod labels;
 mod menu;
 mod resources;
 mod state;
-mod exit;
 
 fn main() {
     App::new()
