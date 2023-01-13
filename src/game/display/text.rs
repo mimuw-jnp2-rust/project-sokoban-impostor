@@ -88,9 +88,3 @@ pub fn display_level_text(
             );
         });
 }
-
-pub fn despawn_level_text(mut commands: Commands, query: Query<Entity, With<LevelText>>) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-}

@@ -56,11 +56,24 @@ pub fn setup_win(mut commands: Commands, asset_server: ResMut<AssetServer>) {
         .with_children(|parent| {
             parent.spawn(
                 TextBundle::from_section(
-                    "Level completed!\n
-                    Press Enter to enter the main menu.",
+                    "Level completed!",
                     TextStyle {
                         font_size: 50.0,
                         color: Color::WHITE,
+                        font: menu_font.clone(),
+                    },
+                )
+                .with_text_alignment(TextAlignment {
+                    vertical: VerticalAlign::Center,
+                    horizontal: HorizontalAlign::Center,
+                }),
+            );
+            parent.spawn(
+                TextBundle::from_section(
+                    "Press Enter to continue",
+                    TextStyle {
+                        font_size: 40.0,
+                        color: Color::DARK_GREEN,
                         font: menu_font.clone(),
                     },
                 )
@@ -78,7 +91,7 @@ pub fn handle_win_click(
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
         app_state
-            .set(DisplayState::LevelSelect)
+            .pop()
             .expect("Could not go out of victory screen");
         keyboard_input.reset(KeyCode::Return);
     }

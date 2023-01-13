@@ -100,9 +100,3 @@ pub fn handle_level_click(
         },
     )
 }
-
-// pub fn delete_level_select(mut commands: Commands, query: Query<Entity, With<LevelSelectItem>>) {
-//     for entity in query.iter() {
-//         commands.entity(entity).despawn_recursive();
-//     }
-// }

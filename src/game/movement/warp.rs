@@ -11,7 +11,6 @@ pub fn handle_warp(
     movement_data: Res<MovementData>,
     mut board: ResMut<Board>,
     timer: Res<AnimationTimer>,
-    mut commands: Commands,
 ) {
     if !timer.0.finished() {
         return;
@@ -22,8 +21,7 @@ pub fn handle_warp(
         if let Floor::Warp(map) = floor {
             let object = board.get_object_type(position);
             if object == GameObject::Player || object == GameObject::Box {
-                let entity = board.delete_object(position);
-                commands.entity(entity).despawn();
+                board.delete_object(position);
                 let warp_position = board.get_warp_position(map, board.get_current_map());
                 board.insert_object(warp_position, object);
             }

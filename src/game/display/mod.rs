@@ -6,9 +6,10 @@ use crate::game::{game_objects::Position, GameItem};
 use crate::labels::Labels;
 use crate::resources::{AnimationTimer, Images};
 use crate::state::{DisplayState, GameState, Move};
+use crate::utils::delete_all_components;
 
 use self::background::render_border;
-use self::text::{despawn_level_text, display_level_text};
+use self::text::{display_level_text, LevelText};
 
 pub mod background;
 mod text;
@@ -22,7 +23,7 @@ impl Plugin for DisplayPlugin {
 
         app.add_system_set(SystemSet::on_enter(DisplayState::Game).with_system(display_level_text));
 
-        app.add_system_set(SystemSet::on_exit(DisplayState::Game).with_system(despawn_level_text));
+        app.add_system_set(SystemSet::on_exit(DisplayState::Game).with_system(delete_all_components::<LevelText>));
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Static)))
                 .label(Labels::Display)
