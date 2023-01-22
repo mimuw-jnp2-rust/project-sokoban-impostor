@@ -1,7 +1,6 @@
-use crate::{
-    consts::TILE_SIZE,
-    resources::{AnimationTimer, Board, MovementData},
-};
+use super::resources::{AnimationTimer, MovementData};
+use crate::consts::TILE_SIZE;
+use crate::game::resources::Board;
 use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};

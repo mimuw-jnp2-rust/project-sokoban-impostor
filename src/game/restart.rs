@@ -1,5 +1,5 @@
+use super::resources::{Board, BoardStates};
 use crate::consts::INITIAL_MAP;
-use crate::resources::{Board, BoardStates};
 use crate::state::CurrentMap;
 use bevy::prelude::*;
 

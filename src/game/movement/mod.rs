@@ -1,6 +1,6 @@
 use crate::{
+    consts::MOVE_ANIMATION_TIME,
     labels::Labels,
-    resources::{AnimationTimer, MovementData},
     state::{GameState, Move},
 };
 use bevy::prelude::*;
@@ -19,12 +19,15 @@ use super::display::{
     despawn_board,
 };
 
+use resources::{AnimationTimer, MovementData};
+
 mod animation;
-mod consts;
+pub mod consts;
 mod events;
 mod ice;
 mod keyboard;
 mod position_updating;
+pub mod resources;
 mod warp;
 
 pub type MovableInQuery = Or<(With<Box>, With<Player>)>;
@@ -53,6 +56,16 @@ impl Plugin for MovementPlugin {
                 .with_system(handle_keypress),
         );
         app.add_event::<MoveEvent>();
+        app.insert_resource(AnimationTimer(Timer::from_seconds(
+            MOVE_ANIMATION_TIME,
+            TimerMode::Once,
+        )));
+        app.insert_resource(MovementData {
+            positions_on_ice: None,
+            moved_positions: Vec::new(),
+            direction: None,
+            is_on_ice: false,
+        });
     }
 }
 

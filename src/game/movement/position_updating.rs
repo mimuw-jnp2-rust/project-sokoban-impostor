@@ -1,8 +1,9 @@
 use bevy::prelude::*;
 
-use crate::resources::{Board, MovementData};
+use crate::game::resources::Board;
 
 use super::events::MoveEvent;
+use super::resources::MovementData;
 
 pub fn handle_move(
     mut reader: EventReader<MoveEvent>,

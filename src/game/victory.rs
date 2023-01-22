@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 
+use super::resources::{Board, VictoryTimer};
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, VictoryTimer};
+// use crate::resources::{
+// Board,
+// VictoryTimer};
 use crate::state::DisplayState;
 
 use super::game_objects::GameObject;
@@ -90,9 +93,7 @@ pub fn handle_win_click(
     mut app_state: ResMut<State<DisplayState>>,
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
-        app_state
-            .pop()
-            .expect("Could not go out of victory screen");
+        app_state.pop().expect("Could not go out of victory screen");
         keyboard_input.reset(KeyCode::Return);
     }
 }

@@ -1,8 +1,6 @@
 use super::game_objects::{Floor, GameObject, Position};
-use crate::{
-    consts::INITIAL_MAP,
-    resources::{Board, CurrentLevel, MapSize},
-};
+use super::resources::{Board, MapSize};
+use crate::{consts::INITIAL_MAP, resources::CurrentLevel};
 use bevy::prelude::*;
 use std::fs;
 

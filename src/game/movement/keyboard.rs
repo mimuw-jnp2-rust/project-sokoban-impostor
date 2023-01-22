@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::game::game_objects::{Direction, *};
-use crate::resources::*;
+use crate::game::resources::{Board, BoardStates};
 use crate::state::{GameState, Move};
 
 use super::events::MoveEvent;

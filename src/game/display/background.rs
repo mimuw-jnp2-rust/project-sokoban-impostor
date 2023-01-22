@@ -2,7 +2,10 @@ use bevy::prelude::*;
 
 use crate::consts::*;
 use crate::game::game_objects::*;
-use crate::resources::{AnimationTimer, Board, Images};
+use crate::resources::Images;
+
+use crate::game::movement::resources::AnimationTimer;
+use crate::game::resources::Board;
 
 use super::render_entity;
 

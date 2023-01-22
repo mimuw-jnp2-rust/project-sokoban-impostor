@@ -1,9 +1,10 @@
+use self::resources::{Board, BoardStates, VictoryTimer};
+use crate::consts::MOVE_ANIMATION_TIME;
 use crate::exit::handle_esc;
 use crate::utils::delete_all_components;
 use crate::{
     consts::INITIAL_MAP,
     labels::Labels,
-    resources::{Board, BoardStates},
     state::{CurrentMap, DisplayState, GameState, Move},
 };
 use bevy::prelude::*;
@@ -17,6 +18,7 @@ pub mod display;
 pub mod game_objects;
 mod maps;
 pub mod movement;
+mod resources;
 mod restart;
 mod victory;
 
@@ -59,6 +61,12 @@ impl Plugin for GamePlugin {
                 .with_system(handle_restart)
                 .with_system(handle_undo),
         );
+        app.insert_resource(Board::new())
+            .insert_resource(BoardStates { boards: Vec::new() });
+        app.insert_resource(VictoryTimer(Timer::from_seconds(
+            MOVE_ANIMATION_TIME * 2.,
+            TimerMode::Once,
+        )));
     }
 }
 

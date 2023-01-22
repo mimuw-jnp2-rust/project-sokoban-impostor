@@ -1,8 +1,10 @@
 use bevy::prelude::*;
 
 use crate::game::game_objects::{Floor, GameObject};
-use crate::resources::{AnimationTimer, Board, MovementData};
+use super::resources::MovementData;
+use crate::game::resources::Board;
 
+use super::resources::AnimationTimer;
 // checks which entities should move if they are on ice
 pub fn handle_ice(
     mut movement_data: ResMut<MovementData>,

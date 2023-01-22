@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
+use super::resources::{AnimationTimer, MovementData};
 use crate::{
     game::game_objects::{Floor, GameObject},
-    resources::{AnimationTimer, Board, MovementData},
     state::CurrentMap,
 };
+
+use crate::game::resources::Board;
 
 pub fn handle_warp(
     mut current_map: ResMut<State<CurrentMap>>,
