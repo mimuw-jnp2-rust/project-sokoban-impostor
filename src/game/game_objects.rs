@@ -1,25 +1,23 @@
-use bevy::prelude::{Component, Entity};
+use bevy::prelude::*;
 
-#[derive(Eq, Hash)]
-pub enum GameObjects {
-    Box(Option<Entity>),
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
+pub enum GameObject {
+    Box,
     Wall,
     Empty,
+    Player,
+}
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
+pub enum Floor {
+    Tile,
+    Ice,
+    Goal,
+    Warp(usize),
 }
 
 #[derive(Component)]
 pub struct Goal;
-
-impl PartialEq for GameObjects {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::Box(_), Self::Box(_)) => true, //we do not care about the insides of Box when comapring
-            (Self::Wall, Self::Wall) => true,
-            (Self::Empty, Self::Empty) => true,
-            _ => false,
-        }
-    }
-}
 
 #[derive(Component)]
 pub struct Wall;
@@ -31,45 +29,77 @@ pub struct Background;
 pub struct Box;
 
 #[derive(Component)]
-pub struct Player {
-    pub position: Position,
-}
+pub struct Player;
 
-#[derive(Component, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Component)]
+pub struct Ice;
+
+#[derive(Component)]
+pub struct Warp;
+
+#[derive(Component, Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
+    pub map: usize,
 }
 
 impl Position {
-    pub fn neighbour(&self, dir: Direction) -> Position {
+    pub fn next_position(&self, dir: Direction) -> Position {
         match dir {
             Direction::Up => Position {
                 x: self.x,
                 y: self.y + 1,
+                map: self.map,
             },
             Direction::Down => Position {
                 x: self.x,
                 y: self.y - 1,
+                map: self.map,
             },
             Direction::Left => Position {
                 x: self.x - 1,
                 y: self.y,
+                map: self.map,
             },
             Direction::Right => Position {
                 x: self.x + 1,
                 y: self.y,
+                map: self.map,
             },
-            Direction::None => self.clone(),
+        }
+    }
+
+    pub fn previous_position(&self, dir: Direction) -> Position {
+        match dir {
+            Direction::Up => Position {
+                x: self.x,
+                y: self.y - 1,
+                map: self.map,
+            },
+            Direction::Down => Position {
+                x: self.x,
+                y: self.y + 1,
+                map: self.map,
+            },
+            Direction::Left => Position {
+                x: self.x + 1,
+                y: self.y,
+                map: self.map,
+            },
+            Direction::Right => Position {
+                x: self.x - 1,
+                y: self.y,
+                map: self.map,
+            },
         }
     }
 }
 
-#[derive(Component, Clone, Copy, PartialEq)]
+#[derive(Component, Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Direction {
     Up,
     Down,
     Left,
     Right,
-    None,
 }

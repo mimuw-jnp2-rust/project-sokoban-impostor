@@ -1,6 +1,12 @@
-5 5
-bbpbb
-bbbbb
-bbgbb
-bbbbb
-bbbbb
+1
+10 10
+gpiwiiiiwi
+iiiiiwiiii
+iiiiwiiiii
+iiiiiwbiii
+wiiiiiiiii
+iiiiiwiiiw
+iwiiiiiwiw
+iiwiiiiiii
+iiiiwiwiii
+iiiwiiiiii

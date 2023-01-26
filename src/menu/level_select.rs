@@ -3,16 +3,16 @@ use bevy::prelude::*;
 use crate::{
     consts::{LEVEL_AMOUNT, MAIN_MENU_FONT, MAP_NAMES},
     resources::CurrentLevel,
-    state::GameState,
+    state::DisplayState,
 };
 
-use super::spawn_button::spawn_button;
+use super::spawn_button;
 #[derive(Component)]
 pub struct LevelSelectItem;
 
 #[derive(Component)]
 pub enum LevelSelectItemType {
-    Level(u32),
+    Level(usize),
     Back,
 }
 
@@ -64,7 +64,7 @@ pub fn setup_level_select(mut commands: Commands, asset_server: Res<AssetServer>
 }
 
 pub fn handle_level_click(
-    mut app_state: ResMut<State<GameState>>,
+    mut app_state: ResMut<State<DisplayState>>,
     mut query: Query<
         (
             &mut Interaction,
@@ -81,16 +81,14 @@ pub fn handle_level_click(
                 LevelSelectItemType::Level(number) => {
                     *current_level = CurrentLevel {
                         level_number: *number,
-                        level_map_str: MAP_NAMES[(*number - 1) as usize],
+                        level_map_str: MAP_NAMES[*number - 1],
                     };
                     app_state
-                        .push(GameState::Game)
+                        .push(DisplayState::Game)
                         .expect("Failed to load game");
                 }
                 LevelSelectItemType::Back => {
-                    app_state
-                        .push(GameState::MainMenu)
-                        .expect("Going back to main menu failed");
+                    app_state.pop().expect("Going back to main menu failed");
                 }
             },
             Interaction::Hovered => {
@@ -101,10 +99,4 @@ pub fn handle_level_click(
             }
         },
     )
-}
-
-pub fn delete_level_select(mut commands: Commands, query: Query<Entity, With<LevelSelectItem>>) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
 }

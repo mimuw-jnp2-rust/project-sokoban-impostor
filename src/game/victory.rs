@@ -1,25 +1,39 @@
 use bevy::prelude::*;
 
+use super::resources::{Board, VictoryTimer};
 use crate::consts::MAIN_MENU_FONT;
-use crate::resources::{Board, Goals};
-use crate::state::GameState;
+// use crate::resources::{
+// Board,
+// VictoryTimer};
+use crate::state::DisplayState;
 
-use super::game_objects::GameObjects;
+use super::game_objects::GameObject;
 
 #[derive(Component)]
 pub struct VictoryItem;
 
-pub fn handle_win(goals: Res<Goals>, board: Res<Board>, mut app_state: ResMut<State<GameState>>) {
+pub fn handle_win(
+    board: Res<Board>,
+    mut display_state: ResMut<State<DisplayState>>,
+    mut timer: ResMut<VictoryTimer>,
+    time: Res<Time>,
+) {
     let mut is_win = true;
-    for position in goals.goals.iter() {
-        if board.entities.get(position).unwrap_or(&GameObjects::Empty) != &GameObjects::Box(None) {
+    for position in board.get_all_goals().iter() {
+        if board.get_object_type(*position) != GameObject::Box {
             is_win = false;
         }
     }
     if is_win {
-        app_state
-            .push(GameState::Victory)
-            .expect("Error while going to victory");
+        timer.0.tick(time.delta());
+    } else {
+        timer.0.reset();
+    }
+    if timer.0.finished() {
+        display_state
+            .set(DisplayState::Victory)
+            .expect("Could not set state to victory");
+        timer.0.reset();
     }
 }
 
@@ -45,11 +59,24 @@ pub fn setup_win(mut commands: Commands, asset_server: ResMut<AssetServer>) {
         .with_children(|parent| {
             parent.spawn(
                 TextBundle::from_section(
-                    "Level completed!\n
-                    Press Enter to enter the main menu.",
+                    "Level completed!",
                     TextStyle {
                         font_size: 50.0,
                         color: Color::WHITE,
+                        font: menu_font.clone(),
+                    },
+                )
+                .with_text_alignment(TextAlignment {
+                    vertical: VerticalAlign::Center,
+                    horizontal: HorizontalAlign::Center,
+                }),
+            );
+            parent.spawn(
+                TextBundle::from_section(
+                    "Press Enter to continue",
+                    TextStyle {
+                        font_size: 40.0,
+                        color: Color::DARK_GREEN,
                         font: menu_font.clone(),
                     },
                 )
@@ -62,18 +89,11 @@ pub fn setup_win(mut commands: Commands, asset_server: ResMut<AssetServer>) {
 }
 
 pub fn handle_win_click(
-    keyboard_input: Res<Input<KeyCode>>,
-    mut app_state: ResMut<State<GameState>>,
+    mut keyboard_input: ResMut<Input<KeyCode>>,
+    mut app_state: ResMut<State<DisplayState>>,
 ) {
     if keyboard_input.pressed(KeyCode::Return) {
-        app_state
-            .push(GameState::MainMenu)
-            .expect("Could not go out of victory screen");
-    }
-}
-
-pub fn delete_win(query: Query<Entity, With<VictoryItem>>, mut commands: Commands) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        app_state.pop().expect("Could not go out of victory screen");
+        keyboard_input.reset(KeyCode::Return);
     }
 }
