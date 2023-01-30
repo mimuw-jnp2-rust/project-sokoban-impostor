@@ -1,9 +1,9 @@
 1
-7 8
-p  wgwww
- b  i  w
-w   iw w
-giiii  w
-w   iwww
-ww wbwww
-ww   www
+7 7
+p  wgww
+ b  i  
+w   iw 
+giiii  
+w   iww
+ww wbww
+ww   ww
