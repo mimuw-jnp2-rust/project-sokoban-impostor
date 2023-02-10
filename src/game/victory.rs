@@ -2,9 +2,6 @@ use bevy::prelude::*;
 
 use super::resources::{Board, VictoryTimer};
 use crate::consts::MAIN_MENU_FONT;
-// use crate::resources::{
-// Board,
-// VictoryTimer};
 use crate::state::DisplayState;
 
 use super::game_objects::GameObject;

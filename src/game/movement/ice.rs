@@ -1,42 +1,45 @@
 use bevy::prelude::*;
 
+use super::events::{EnteredFloorEvent, ExitedFloorEvent};
 use crate::game::game_objects::{Floor, GameObject};
-use super::resources::MovementData;
 use crate::game::resources::Board;
 
 use super::resources::AnimationTimer;
 // checks which entities should move if they are on ice
 pub fn handle_ice(
-    mut movement_data: ResMut<MovementData>,
+    mut moved_writer: EventWriter<ExitedFloorEvent>,
+    // mut moved_reader: EventReader<EnteredFloorEvent>,
+    mut position_reader: EventReader<EnteredFloorEvent>,
     timer: ResMut<AnimationTimer>,
     board: Res<Board>,
 ) {
     if !timer.0.finished() {
         return;
     }
-    let mut positions_on_ice = Vec::new();
-    let direction = movement_data
-        .direction
-        .expect("No direction after animation");
-    for position in movement_data.moved_positions.iter() {
-        let position = *position;
-        if board.get_floor_type(position) != Floor::Ice {
+    let mut events = Vec::new();
+    let mut positions = Vec::new();
+    for event in position_reader.iter() {
+        positions.push(event.position);
+        events.push(event);
+    }
+    events.sort_by(|event1, event2| event1.position.cmp_to_other(&event2.position, event1.direction));
+    for event in events.iter() {
+        let (position, direction) = (event.position, event.direction);
+        if event.floor != Floor::Ice {
             break; //break in this loop means that this object and all that come before it stop movement
         }
         let object_position = board.get_next_position_for_move(position, direction);
         let object = board.get_object_type(object_position);
         match object {
             GameObject::Empty => {
-                positions_on_ice.push(position);
+                moved_writer.send(ExitedFloorEvent { floor: Floor::Ice, position, object: event.object, direction: event.direction });
             }
             GameObject::Box => {
-                if movement_data
-                    .moved_positions
-                    .contains(&position.next_position(direction))
+                if positions.contains(&object_position)
                 {
                     //found box is already moving
-                    positions_on_ice.push(position);
-                } else if board.get_floor_type(position.next_position(direction)) == Floor::Ice {
+                    moved_writer.send(ExitedFloorEvent { floor: Floor::Ice, position, object: event.object, direction: event.direction });
+                } else if board.get_floor_type(object_position) == Floor::Ice {
                     // if there are multiple stationary boxes ahead, either the last one moves
                     // (if it's on ice) or they remain stationary otherwise
                     let mut last_box_position = object_position;
@@ -52,7 +55,7 @@ pub fn handle_ice(
                         next_object = board.get_object_type(next_object_position);
                     }
                     if next_object == GameObject::Empty {
-                        positions_on_ice.push(last_box_position);
+                        moved_writer.send(ExitedFloorEvent { floor: Floor::Ice, position: last_box_position, object: event.object, direction: event.direction });
                     }
                     break;
                     //either way the entity that encountered a stationary entity in front of it must stop, and so do entities before it
@@ -63,10 +66,4 @@ pub fn handle_ice(
             _ => break,
         }
     }
-    if positions_on_ice.is_empty() {
-        movement_data.is_on_ice = false;
-    } else {
-        movement_data.is_on_ice = true;
-    }
-    movement_data.positions_on_ice = Some(positions_on_ice);
 }

@@ -63,6 +63,16 @@ pub fn render_board(
                     );
                     board.insert_entity(position, entity);
                 }
+                GameObject::HidingWall => {
+                    let entity = render_entity(
+                        HiddenWall,
+                        &mut commands,
+                        images.shown_hidden_wall_image.clone(),
+                        position,
+                        OBJECT_Z_INDEX,
+                    );
+                    board.insert_entity(position, entity);
+                }
                 _ => (),
             }
         }
@@ -107,6 +117,18 @@ pub fn render_board(
                         position,
                         FLOOR_Z_INDEX,
                     );
+                }
+                Floor::HiddenWall => {
+                    render_entity(
+                        HiddenWall,
+                        &mut commands,
+                        images.hidden_wall_image.clone(),
+                        position,
+                        FLOOR_Z_INDEX,
+                    );
+                }
+                Floor::Button => {
+                    render_entity(BoxButton, &mut commands, images.button_image.clone(), position, FLOOR_Z_INDEX);
                 }
             }
         }

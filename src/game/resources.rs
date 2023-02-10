@@ -164,6 +164,22 @@ impl Board {
             self.boards[map].goals.clear();
         }
     }
+
+    pub fn toggle_hiding_wall(&mut self) {
+        for map in 0..MAX_MAPS {
+            let floors = self.boards[map].floors.clone();
+            for (position, floor) in floors.iter() {
+                if floor == &Floor::HiddenWall {
+                    if self.get_object_type(*position) == GameObject::Empty {
+                        self.boards[map].objects.insert(*position, GameObject::HidingWall);
+                    }
+                    else {
+                        self.delete_object(*position);
+                    }
+                }
+            }
+        }
+    }
 }
 
 #[derive(Resource)]

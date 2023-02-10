@@ -6,20 +6,19 @@ use crate::{
 use bevy::prelude::*;
 
 use animation::{end_animation, move_animation};
-use events::MoveEvent;
 use ice::handle_ice;
 use keyboard::handle_keypress;
-use position_updating::handle_move;
 use warp::handle_warp;
 
 use crate::game::game_objects::{Box, Player};
+
+use self::{position_updating::handle_move, events::{ExitedFloorEvent, EnteredFloorEvent}, resources::AnimationTimer, button::handle_button};
 
 use super::display::{
     background::{render_board, render_border},
     despawn_board,
 };
 
-use resources::{AnimationTimer, MovementData};
 
 mod animation;
 pub mod consts;
@@ -29,6 +28,7 @@ mod keyboard;
 mod position_updating;
 pub mod resources;
 mod warp;
+mod button;
 
 pub type MovableInQuery = Or<(With<Box>, With<Player>)>;
 pub struct MovementPlugin;
@@ -38,7 +38,8 @@ impl Plugin for MovementPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState(Some(Move::Moving)))
                 .with_system(handle_move.before(move_animation))
-                .with_system(move_animation.before(handle_warp).before(handle_ice))
+                .with_system(move_animation.before(handle_warp).before(handle_ice).before(handle_button))
+                .with_system(handle_button.before(despawn_board))
                 .with_system(handle_warp.before(despawn_board))
                 .with_system(handle_ice.before(despawn_board)) //otherwise it could ignore the positions_on_ice and end the animation
                 .with_system(despawn_board.before(render_board).before(render_border))
@@ -55,42 +56,27 @@ impl Plugin for MovementPlugin {
                 .label(Labels::Movement)
                 .with_system(handle_keypress),
         );
-        app.add_event::<MoveEvent>();
+        app.add_event::<ExitedFloorEvent>();
+        app.init_resource::<Events<EnteredFloorEvent>>();
         app.insert_resource(AnimationTimer(Timer::from_seconds(
             MOVE_ANIMATION_TIME,
             TimerMode::Once,
         )));
-        app.insert_resource(MovementData {
-            positions_on_ice: None,
-            moved_positions: Vec::new(),
-            direction: None,
-            is_on_ice: false,
-        });
     }
 }
 
 fn continue_animation(
-    mut movement_data: ResMut<MovementData>,
     mut app_state: ResMut<State<GameState>>,
-    mut writer: EventWriter<MoveEvent>,
     mut timer: ResMut<AnimationTimer>,
+    reader: EventReader<ExitedFloorEvent>,
+    mut entered_events: ResMut<Events<EnteredFloorEvent>>,
 ) {
     if !timer.0.finished() {
         return;
     }
-    let positions = movement_data.positions_on_ice.clone();
-    if positions.is_none() {
-        return;
-    }
-    let positions = positions.unwrap();
-    if !positions.is_empty() {
-        writer.send(MoveEvent {
-            direction: movement_data.direction.expect("Movement missing direction"),
-            positions, //this vector has less than 20 entries
-        });
-        movement_data.direction = None;
-        movement_data.moved_positions.clear();
-        movement_data.positions_on_ice = None;
+
+    entered_events.update();
+    if !reader.is_empty() {
         timer.0.reset();
     } else {
         app_state

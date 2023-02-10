@@ -7,6 +7,9 @@ pub const GOAL_TEXTURE: &str = "textures/goal.png";
 pub const BOX_ON_GOAL_TEXTURE: &str = "textures/box_on_goal.png";
 pub const ICE_TEXTURE: &str = "textures/ice.png";
 pub const WARP_TEXTURE: &str = "textures/warp.png";
+pub const HIDDEN_WALL_TEXTURE: &str = "textures/hidden_wall.png";
+pub const SHOWN_HIDDEN_WALL_TEXTURE: &str = "textures/hidden_wall_shown.png";
+pub const BUTTON_TEXTURE: &str = "textures/button.png";
 /** FONTS */
 
 pub const MAIN_MENU_FONT: &str = "fonts/square-deal.ttf";

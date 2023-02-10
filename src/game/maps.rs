@@ -55,6 +55,16 @@ pub fn load_starting_map(mut board: ResMut<Board>, current_level: Res<CurrentLev
                     'i' => {
                         board.insert_floor(position, Floor::Ice);
                     }
+                    'u' => {
+                        board.insert_floor(position, Floor::Button);
+                    }
+                    'h' => {
+                        board.insert_floor(position, Floor::HiddenWall);
+                    }
+                    'H' => {
+                        board.insert_floor(position, Floor::HiddenWall);
+                        board.insert_object(position, GameObject::HidingWall);
+                    }
                     char if char.is_ascii_digit() => {
                         board.insert_floor(
                             position,

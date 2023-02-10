@@ -4,12 +4,12 @@ use crate::game::game_objects::{Direction, *};
 use crate::game::resources::{Board, BoardStates};
 use crate::state::{GameState, Move};
 
-use super::events::MoveEvent;
+use super::events::ExitedFloorEvent;
 
 pub fn handle_keypress(
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: ResMut<Input<KeyCode>>,
     board: Res<Board>,
-    mut writer: EventWriter<MoveEvent>,
+    mut writer: EventWriter<ExitedFloorEvent>,
     mut app_state: ResMut<State<GameState>>,
     mut board_states: ResMut<BoardStates>,
 ) {
@@ -38,10 +38,14 @@ pub fn handle_keypress(
     let object_blocking = board.get_object_type(next_position);
     if object_blocking == GameObject::Empty {
         board_states.boards.push(board.clone());
-        writer.send(MoveEvent {
-            direction,
-            positions,
-        });
+        for position in positions {
+            writer.send(ExitedFloorEvent {
+                floor: board.get_floor_type(position),
+                position,
+                direction,
+                object: board.get_object_type(position),
+            });
+        }
         app_state
             .set(GameState(Some(Move::Moving)))
             .expect("Could not switch states");

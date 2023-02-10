@@ -18,6 +18,9 @@ pub struct Images {
     pub tile_image: Handle<Image>,
     pub ice_image: Handle<Image>,
     pub warp_image: Handle<Image>,
+    pub button_image: Handle<Image>,
+    pub hidden_wall_image: Handle<Image>,
+    pub shown_hidden_wall_image: Handle<Image>,
 }
 
 impl FromWorld for Images {
@@ -33,6 +36,9 @@ impl FromWorld for Images {
         let tile_image = asset_server.load(TILE_TEXTURE);
         let ice_image = asset_server.load(ICE_TEXTURE);
         let warp_image = asset_server.load(WARP_TEXTURE);
+        let button_image = asset_server.load(BUTTON_TEXTURE);
+        let hidden_wall_image = asset_server.load(HIDDEN_WALL_TEXTURE);
+        let shown_hidden_wall_image = asset_server.load(SHOWN_HIDDEN_WALL_TEXTURE);
 
         Images {
             player_image,
@@ -43,6 +49,9 @@ impl FromWorld for Images {
             tile_image,
             ice_image,
             warp_image,
+            button_image,
+            hidden_wall_image,
+            shown_hidden_wall_image,
         }
     }
 }

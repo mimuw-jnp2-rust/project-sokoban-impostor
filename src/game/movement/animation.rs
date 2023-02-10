@@ -1,4 +1,4 @@
-use super::resources::{AnimationTimer, MovementData};
+use super::{resources::AnimationTimer, events::EnteredFloorEvent};
 use crate::consts::TILE_SIZE;
 use crate::game::resources::Board;
 use bevy::prelude::*;
@@ -25,14 +25,15 @@ fn modify_transform(
     direction: Direction,
     timer: &ResMut<AnimationTimer>,
     starting_position: Position,
-    movement_data: &Res<MovementData>,
+    floor: Floor,
 ) {
-    let distance = if movement_data.is_on_ice {
-        //on ice we want to have uniform movement animation
+    let distance = if floor == Floor::Ice {
+        // on ice we want to have uniform movement animation
         timer.0.percent()
     } else {
         animation_weight(timer.0.percent())
     };
+    // let distance = timer.0.percent();
     match direction {
         Direction::Down => {
             transform.translation.y = (starting_position.y as f32 - distance) * TILE_SIZE;
@@ -51,16 +52,19 @@ fn modify_transform(
 
 pub fn move_animation(
     time: Res<Time>,
-    movement_data: Res<MovementData>,
+    mut moved: EventReader<EnteredFloorEvent>,
     mut query: Query<&mut Transform, MovableInQuery>,
     mut timer: ResMut<AnimationTimer>,
     board: Res<Board>,
+    mut events: Local<Vec<EnteredFloorEvent>>,
 ) {
     timer.0.tick(time.delta());
-    let direction_opt = movement_data.direction;
-    if let Some(direction) = direction_opt {
-        for position in movement_data.moved_positions.iter() {
-            let entity_opt = board.get_entity(*position);
+    if !moved.is_empty() {
+        events.clear();
+        for event in moved.iter() {
+            events.push(*event);
+            let (position, direction) = (event.position, event.direction);
+            let entity_opt = board.get_entity(event.position);
             if let Some(entity) = entity_opt {
                 let transform = query.get_mut(entity).expect("Moved box entity not found");
                 modify_transform(
@@ -68,15 +72,29 @@ pub fn move_animation(
                     direction,
                     &timer,
                     position.previous_position(direction),
-                    &movement_data,
+                    event.floor
+                );
+            }
+        }
+    }
+    else {
+        for event in &events {
+            let (position, direction) = (event.position, event.direction);
+            let entity_opt = board.get_entity(event.position);
+            if let Some(entity) = entity_opt {
+                let transform = query.get_mut(entity).expect("Moved box entity not found");
+                modify_transform(
+                    transform,
+                    direction,
+                    &timer,
+                    position.previous_position(direction),
+                    event.floor
                 );
             }
         }
     }
 }
 
-pub fn end_animation(mut movement_data: ResMut<MovementData>, mut timer: ResMut<AnimationTimer>) {
-    movement_data.moved_positions.clear();
-    movement_data.direction = None;
+pub fn end_animation(mut timer: ResMut<AnimationTimer>) {
     timer.0.reset();
 }
